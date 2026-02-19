@@ -741,7 +741,7 @@
       var raiseTitle = raiseSection.querySelector('.HeroTitle');
       if(raiseTitle){
         var iconImg = document.createElement('img');
-        iconImg.src = 'images/Group 37.png';
+        iconImg.src = 'images/group-37.png';
         iconImg.alt = '';
         iconImg.style.cssText = 'width:80px;height:auto;flex-shrink:0';
         var titleRow = document.createElement('div');
@@ -757,10 +757,10 @@
        ========================================= */
 
     /* 1. INCUBAT3 SECTION 3D visual (top ~2025, 1431x806)
-       Replace base64 with images/incubat3 section.png */
+       Replace base64 with images/incubat3-section.png */
     document.querySelectorAll('img[data-layer="hf_20260123_093008_25c1d8a7-7819-42e3-a1dc-9b017614ab15 1"]').forEach(function(img){
       if(img.style.width.indexOf('1431') !== -1){
-        replaceWithImage(img, 'images/incubat3 section.png');
+        replaceWithImage(img, 'images/incubat3-section.png');
         var replaced = img.previousElementSibling;
         if(replaced){
           replaced.style.top = '2000px';
@@ -825,7 +825,7 @@
        ADD incubat3 bg.png behind title/paragraph area
        ========================================= */
     var incBg = document.createElement('img');
-    incBg.src = 'images/incubat3 bg.png';
+    incBg.src = 'images/incubat3-bg.png';
     incBg.style.cssText = 'width:1247px;height:auto;left:133px;top:1500px;position:absolute;mix-blend-mode:screen;filter:blur(64px);pointer-events:none';
     page.appendChild(incBg);
 
@@ -925,7 +925,7 @@
     var circlesVid = document.createElement('div');
     circlesVid.className = 'injected-video';
     circlesVid.style.cssText = 'width:1600px;height:1200px;left:-44px;top:3200px;position:absolute;overflow:hidden;z-index:0;-webkit-mask-image:linear-gradient(180deg, transparent 0%, black 55%, black 75%, transparent 100%);mask-image:linear-gradient(180deg, transparent 0%, black 55%, black 75%, transparent 100%)';
-    circlesVid.innerHTML = '<video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;filter:blur(18px);transform:scale(1.1)"><source src="videos/rotating circles.mp4" type="video/mp4"></video>';
+    circlesVid.innerHTML = '<video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;filter:blur(18px);transform:scale(1.1)"><source src="videos/rotating-circles.mp4" type="video/mp4"></video>';
     page.insertBefore(circlesVid, page.firstChild);
 
     /* --- RAISE BUTTONS --- */
@@ -1369,7 +1369,7 @@
         + '<img src="images/icm_4x_1_14.png" alt="ICM">'
         + '<img src="images/group_595_1_16.png" alt="Group 595">'
         + '</div>'
-        + '<img class="superapp-screenshot" src="images/incubat3 section.png" alt="Incubat3 Platform">'
+        + '<img class="superapp-screenshot" src="images/incubat3-section.png" alt="Incubat3 Platform">'
         + '<div class="m-heading">The Web3 Superapp</div>';
       var superappBtns = document.createElement('div');
       superappBtns.className = 'superapp-buttons';
@@ -1392,7 +1392,7 @@
         {
           id: 'mobile-raise',
           title: 'Raise',
-          iconHTML: '<img src="images/Group 37.png" alt="" style="width:40px;height:auto">',
+          iconHTML: '<img src="images/group-37.png" alt="" style="width:40px;height:auto">',
           tagline: 'Raising money is easy. Undoing a bad launch is impossible.',
           description: 'On Incubat3, fundraising is designed as a core GTM phase \u2013 not a standalone raise. Capital formation is executed in lockstep with distribution, narrative, and early network alignment, ensuring access is earned by participants positioned to support the ecosystem long after TGE. Allocation is informed by reputation and demonstrated intent, aligning capital with long-term contributors rather than short-term demand.',
           buttons: [
