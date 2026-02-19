@@ -186,7 +186,7 @@
 <body>
   <!-- LOADER -->
   <div id="loader" class="loader">
-    <video id="loader-video" muted playsinline>
+    <video id="loader-video" autoplay muted playsinline>
       <source src="Loader.mp4" type="video/mp4">
     </video>
   </div>
@@ -677,9 +677,9 @@
       site.classList.add('site-wrap--visible');
     }
 
-    lv.play().catch(function(){});
+    lv.play().catch(function(){ showSite(); });
     lv.addEventListener('ended', showSite);
-    setTimeout(showSite, 6000);
+    setTimeout(showSite, window.innerWidth <= 768 ? 3000 : 6000);
 
     /* =========================================
        HELPER: replace an <img> with a <video>
