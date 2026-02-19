@@ -101,6 +101,86 @@
     @media(max-width:992px){
       .scroller{display:none}
     }
+
+    /* === MOBILE === */
+    @media(max-width:768px){
+      .I3HomePage{width:100%!important;height:auto!important;transform:none!important;overflow:visible!important}
+      .site-wrap{min-height:auto!important;overflow:visible!important}
+      .I3HomePage>.desktop-only{display:none!important}
+
+      /* Mobile sections */
+      .mobile-section{position:relative;width:100%;padding:60px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box}
+      .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-end;padding-bottom:80px;overflow:hidden}
+      .mobile-section--hero .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+      .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:cover;filter:blur(10px);transform:scale(1.1)}
+      .mobile-section--hero .hero-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(180deg,transparent,black)}
+      .mobile-section--hero .hero-content{position:relative;z-index:1}
+
+      .mobile-section--superapp{text-align:center;align-items:center;padding-top:40px}
+      .mobile-section--superapp .partner-logos{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;padding:10px 0}
+      .mobile-section--superapp .partner-logos img{height:24px;width:auto}
+      .mobile-section--superapp .superapp-screenshot{width:100%;border-radius:8px;-webkit-mask-image:linear-gradient(180deg,black 0%,black 60%,transparent 100%);mask-image:linear-gradient(180deg,black 0%,black 60%,transparent 100%)}
+      .mobile-section--superapp .superapp-buttons{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%}
+
+      .mobile-section--feature{padding-top:50px;padding-bottom:50px;overflow:hidden}
+      .mobile-section--feature .section-icon-title{display:flex;align-items:center;gap:12px}
+      .mobile-section--feature .section-icon-title img{width:40px;height:auto;flex-shrink:0}
+      .mobile-section--feature .section-icon-title svg{flex-shrink:0}
+      .mobile-section--feature .section-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+      .mobile-section--feature .section-bg video,.mobile-section--feature .section-bg img{width:100%;height:100%;object-fit:cover;filter:blur(18px);mix-blend-mode:screen;transform:scale(1.2)}
+      .mobile-section--feature>*{position:relative;z-index:1}
+      .mobile-section--feature .section-buttons{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+
+      .mobile-section--arc{text-align:center;align-items:center;gap:40px}
+      .mobile-section--arc .arc-video{width:calc(100% + 40px);margin:-60px -20px 0;max-height:360px;object-fit:cover}
+      .mobile-section--arc .arc-card{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+      .mobile-section--arc .arc-card img{width:200px;height:200px;object-fit:contain}
+
+      .mobile-section--footer{padding-top:40px;padding-bottom:40px;gap:32px}
+      .mobile-section--footer .footer-nav{display:grid;grid-template-columns:1fr 1fr;gap:32px 24px}
+      .mobile-section--footer .footer-nav-col{display:flex;flex-direction:column;gap:8px}
+      .mobile-section--footer .footer-nav-header{font-size:10px;font-family:Poppins;font-weight:500;text-transform:uppercase;letter-spacing:.4px;color:white;opacity:.6}
+      .mobile-section--footer .footer-nav-link{font-size:14px;font-family:Poppins;font-weight:400;color:white;line-height:1.6}
+      .mobile-section--footer .footer-social{display:flex;flex-direction:column;gap:16px}
+      .mobile-section--footer .footer-social a,.mobile-section--footer .footer-social span{font-size:12px;font-family:Poppins;font-weight:500;color:white;text-decoration:none;padding:12px 0;border-top:1px solid rgba(255,255,255,.2)}
+      .mobile-section--footer .footer-copyright{font-size:10px;font-family:Poppins;font-weight:500;color:white;opacity:.5;text-align:center}
+      .mobile-section--footer .footer-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+      .mobile-section--footer .footer-bg video{width:100%;height:100%;object-fit:cover;filter:blur(18px);opacity:.4}
+      .mobile-section--footer>*{position:relative;z-index:1}
+
+      /* Mobile typography */
+      .m-title{font-size:40px;font-family:'PP Formula',sans-serif;font-weight:400;color:white;line-height:1.15}
+      .m-tagline{font-size:28px;font-family:'PP Formula',sans-serif;font-weight:400;color:white;line-height:1.3}
+      .m-body{font-size:15px;font-family:Poppins,sans-serif;font-weight:300;color:white;line-height:1.7;opacity:.85}
+      .m-heading{font-size:28px;font-family:'PP Formula',sans-serif;font-weight:400;color:white;line-height:1.3}
+      .m-subheading{font-size:22px;font-family:'PP Formula',sans-serif;font-weight:400;color:white;line-height:1.3}
+
+      /* Mobile buttons */
+      .m-btn{height:48px;padding:0 48px 0 16px;border-radius:20px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;position:relative;font-size:15px;font-family:Poppins,sans-serif;font-weight:400;color:white;text-decoration:none;white-space:nowrap;border:none;background:transparent}
+      .m-btn--primary{background:#0000FF}
+      .m-btn--outline{border:1px solid #fff}
+      .m-btn .m-btn-arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%)}
+
+      /* Mobile nav */
+      .mobile-nav-toggle{position:fixed;top:16px;right:16px;z-index:200;width:44px;height:44px;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);border-radius:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;-webkit-tap-highlight-color:transparent}
+      .mobile-nav-toggle span{display:block;width:20px;height:2px;background:#fff;transition:all .3s;border-radius:1px}
+      .mobile-nav-toggle--open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+      .mobile-nav-toggle--open span:nth-child(2){opacity:0}
+      .mobile-nav-toggle--open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+      .mobile-nav-drawer{position:fixed;top:0;right:-280px;width:280px;height:100vh;height:100dvh;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:190;transition:right .3s ease;padding:80px 32px 32px;display:flex;flex-direction:column;gap:0}
+      .mobile-nav-drawer--open{right:0}
+      .mobile-nav-drawer a{color:#fff;font-family:'PP Formula',sans-serif;font-size:18px;text-decoration:none;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent}
+      .mobile-nav-drawer a:active{color:#00f}
+      .mobile-nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:180}
+      .mobile-nav-overlay--visible{display:block}
+
+      /* Coming Soon - tap on mobile */
+      .m-btn .coming-soon-tip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(255,255,255,.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);font-family:Poppins,sans-serif;font-size:11px;font-weight:400;letter-spacing:.5px;padding:8px 18px;border-radius:20px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .35s ease,transform .35s ease;z-index:10}
+      .m-btn .coming-soon-tip--visible{opacity:1;transform:translateX(-50%) translateY(0)}
+    }
+    @media(min-width:769px){
+      .mobile-nav-toggle,.mobile-nav-drawer,.mobile-nav-overlay,.mobile-section{display:none!important}
+    }
   </style>
 </head>
 <body>
@@ -632,6 +712,9 @@
     var page = document.querySelector('.I3HomePage');
     if(!page) return;
 
+    var isMobile = window.innerWidth <= 768;
+
+    if(!isMobile){
     /* =========================================
        HERO VIDEO - inject into I3HomePage
        ========================================= */
@@ -1216,6 +1299,403 @@
         }
       );
     });
+
+    } else {
+      /* =========================================
+         MOBILE LAYOUT
+         ========================================= */
+      buildMobileLayout(page);
+      buildMobileNav();
+      setupMobileAnimations();
+    }
+
+    /* =========================================
+       MOBILE: Build full layout
+       ========================================= */
+    function buildMobileLayout(page){
+      page.style.width = '100%';
+      page.style.height = 'auto';
+      page.style.overflow = 'visible';
+
+      // Hide all original Figma elements
+      Array.from(page.children).forEach(function(el){ el.classList.add('desktop-only'); });
+
+      var arrowSVG = '<svg class="m-btn-arrow" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.5 0.5L12.5 0.5M12.5 0.5L12.5 12.5M12.5 0.5L0.5 12.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      function makeBtn(text, type, comingSoon){
+        var btn = document.createElement('div');
+        btn.className = 'm-btn m-btn--' + type;
+        btn.innerHTML = '<span>' + text + '</span>' + arrowSVG;
+        if(comingSoon){
+          var tip = document.createElement('span');
+          tip.className = 'coming-soon-tip';
+          tip.textContent = 'Coming Soon';
+          btn.appendChild(tip);
+          btn.addEventListener('touchstart', function(e){
+            e.preventDefault();
+            tip.classList.add('coming-soon-tip--visible');
+            setTimeout(function(){ tip.classList.remove('coming-soon-tip--visible'); }, 2000);
+          });
+          btn.addEventListener('mouseenter', function(){ tip.classList.add('coming-soon-tip--visible'); });
+          btn.addEventListener('mouseleave', function(){ tip.classList.remove('coming-soon-tip--visible'); });
+        }
+        return btn;
+      }
+
+      // === HERO ===
+      var hero = document.createElement('div');
+      hero.className = 'mobile-section mobile-section--hero';
+      hero.id = 'mobile-hero';
+      hero.innerHTML = '<div class="hero-bg"><video autoplay muted loop playsinline poster="images/hero_18.png"><source src="assets/hero.mp4" type="video/mp4"></video></div>';
+      var heroContent = document.createElement('div');
+      heroContent.className = 'hero-content';
+      heroContent.innerHTML = '<div style="margin-bottom:24px"><svg width="40" height="35" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg></div>'
+        + '<div class="m-tagline" style="font-size:36px;line-height:44px;margin-bottom:16px">Incubat3<br>Your all-in-one launch partner.</div>'
+        + '<div class="m-body" style="margin-bottom:24px">The Web3 superapp powered by AI &amp; reputation analysis.</div>';
+      heroContent.appendChild(makeBtn('Connect Wallet', 'outline', true));
+      hero.appendChild(heroContent);
+      page.appendChild(hero);
+
+      // === INCUBAT3 / SUPERAPP ===
+      var superapp = document.createElement('div');
+      superapp.className = 'mobile-section mobile-section--superapp';
+      superapp.id = 'mobile-incubat3';
+      superapp.innerHTML = '<div class="m-title" style="font-size:48px">Incubat3</div>'
+        + '<div class="m-body" style="text-align:left">Incubat3 is the Web3 superapp for building, launching, and scaling token networks end-to-end.<br><br>Incubat3 unifies what is currently fragmented across agencies, task platforms, launchpads, advisors, and trading tools into one blueprinted execution system. Incubat3 maps, runs, and optimises the entire lifecycle, from GTM strategy and capital formation to post-TGE market behaviour and long-term incentives. Powered by AI and reputation intelligence, and delivered through a network of system partners, Incubat3 turns launches into repeatable, data-driven outcomes, making it the operating layer where token networks are actually built, activated, and sustained.</div>'
+        + '<div class="partner-logos">'
+        + '<img src="images/cc-full-logo-white_1_12.png" alt="CC">'
+        + '<img src="images/asset_1_4x_1_15.png" alt="Asset">'
+        + '<img src="images/inferno_4x_1_13.png" alt="Inferno">'
+        + '<img src="images/icm_4x_1_14.png" alt="ICM">'
+        + '<img src="images/group_595_1_16.png" alt="Group 595">'
+        + '</div>'
+        + '<img class="superapp-screenshot" src="images/incubat3 section.png" alt="Incubat3 Platform">'
+        + '<div class="m-heading">The Web3 Superapp</div>';
+      var superappBtns = document.createElement('div');
+      superappBtns.className = 'superapp-buttons';
+      superappBtns.appendChild(makeBtn("Let's Build", 'primary', true));
+      superappBtns.appendChild(makeBtn('Connect Wallet', 'outline', true));
+      superapp.appendChild(superappBtns);
+      page.appendChild(superapp);
+
+      // === FEATURE SECTIONS ===
+      var features = [
+        {
+          id: 'mobile-build',
+          title: 'Build',
+          iconHTML: '<svg width="28" height="28" viewBox="0 0 35 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34.4625 33.7124V6.68903C34.4625 6.20041 34.2743 5.73182 33.9394 5.38633L29.2417 0.539704C28.907 0.19426 28.453 0.000125004 27.9795 0H1.78579C1.31219 7.28244e-05 0.85801 0.194207 0.523125 0.53971C0.188239 0.885213 7.05865e-05 1.35379 0 1.84241L0 28.8666C-1.44068e-06 29.1086 0.0461951 29.3482 0.135952 29.5718C0.225709 29.7953 0.357268 29.9985 0.523119 30.1696L5.22081 35.0159C5.3866 35.1871 5.58345 35.3228 5.8001 35.4154C6.01676 35.508 6.24897 35.5557 6.48348 35.5556H32.6764C33.15 35.5556 33.6042 35.3614 33.9391 35.0159C34.274 34.6704 34.4622 34.2019 34.4622 33.7132" fill="white"/></svg>',
+          tagline: 'We build the foundation. Scale follows by design.',
+          description: 'Most tokens fail long before TGE \u2013 not because of lack of capital, but because the underlying structure is weak. Growth is often dealt with reactively, after launch dynamics are already set. Incubat3 addresses this from day one. Before capital is raised or tokens are distributed, we blueprint the network itself: aligning GTM strategy, narrative, community architecture, and growth mechanics into a single, coherent system. This ensures scale is structural, predictable, and built in from the start.',
+          buttons: [{ text: 'Apply to Build', type: 'primary', soon: true }],
+          bgType: null
+        },
+        {
+          id: 'mobile-raise',
+          title: 'Raise',
+          iconHTML: '<img src="images/Group 37.png" alt="" style="width:40px;height:auto">',
+          tagline: 'Raising money is easy. Undoing a bad launch is impossible.',
+          description: 'On Incubat3, fundraising is designed as a core GTM phase \u2013 not a standalone raise. Capital formation is executed in lockstep with distribution, narrative, and early network alignment, ensuring access is earned by participants positioned to support the ecosystem long after TGE. Allocation is informed by reputation and demonstrated intent, aligning capital with long-term contributors rather than short-term demand.',
+          buttons: [
+            { text: 'For Founders', type: 'primary', soon: true },
+            { text: 'For Investors', type: 'outline', soon: true }
+          ],
+          bgType: null
+        },
+        {
+          id: 'mobile-launch',
+          title: 'Launch',
+          iconHTML: '<svg width="28" height="30" viewBox="0 0 89 94" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.977 91.3432V57.6844C18.977 57.2401 18.7568 56.8141 18.3649 56.5L12.868 52.0939C12.4763 51.7798 11.9451 51.6033 11.3911 51.6032H2.08965C1.53547 51.6033 1.004 51.7798 0.612135 52.0939C0.220271 52.408 8.25963e-05 52.834 0 53.2782V86.9378C-1.6858e-06 87.1578 0.0540725 87.3756 0.159101 87.5789C0.264129 87.7821 0.418066 87.9668 0.612135 88.1224L6.10909 92.5283C6.30309 92.6839 6.53341 92.8073 6.78693 92.8914C7.04045 92.9756 7.31219 93.019 7.5866 93.019H16.8871C17.4413 93.0189 17.9728 92.8424 18.3646 92.5283C18.7565 92.2142 18.977 91.7874 18.977 91.3432Z" fill="white"/><path d="M42.3417 90.8526V39.0112C42.3416 38.567 42.1214 38.141 41.7295 37.8269L36.2326 33.4207C35.8409 33.1067 35.3097 32.9302 34.7557 32.9301H25.4542C24.9001 32.9301 24.3686 33.1066 23.9768 33.4207C23.5849 33.7348 23.3647 34.1608 23.3646 34.605V86.4471C23.3646 86.6671 23.4187 86.885 23.5237 87.0882C23.6287 87.2915 23.7827 87.4761 23.9768 87.6317L29.4737 92.0376C29.6677 92.1932 29.898 92.3166 30.1516 92.4008C30.4051 92.485 30.6768 92.5283 30.9512 92.5283H40.2517C40.8059 92.5282 41.3374 92.3517 41.7292 92.0376C42.1211 91.7235 42.3416 91.2968 42.3417 90.8526Z" fill="white"/><path d="M65.4262 91.3431V21.3193C65.4261 20.875 65.2059 20.449 64.814 20.1349L59.3171 15.7288C58.9254 15.4147 58.3942 15.2382 57.8402 15.2381H48.5387C47.9846 15.2382 47.4531 15.4147 47.0613 15.7288C46.6694 16.0429 46.4492 16.4689 46.4491 16.9131V86.9377C46.4491 87.1576 46.5032 87.3755 46.6082 87.5787C46.7132 87.782 46.8672 87.9667 47.0612 88.1222L52.5582 92.5282C52.7522 92.6837 52.9826 92.8071 53.2361 92.8913C53.4896 92.9755 53.7613 93.0188 54.0357 93.0188H63.3362C63.8904 93.0188 64.4219 92.8423 64.8137 92.5282C65.2056 92.2141 65.4261 91.7873 65.4262 91.3431Z" fill="white"/><path d="M88.8909 92.3243V6.08116C88.8909 5.63694 88.6707 5.21093 88.2788 4.89684L82.7818 0.490657C82.3902 0.176605 81.8589 0.000113644 81.3049 0H72.0035C71.4493 6.62064e-05 70.9178 0.176559 70.526 0.490664C70.1341 0.804769 69.9139 1.23077 69.9139 1.67498V87.9188C69.9139 88.1388 69.9679 88.3567 70.0729 88.5599C70.178 88.7632 70.3319 88.9478 70.526 89.1034L76.0229 93.5093C76.2169 93.6649 76.4473 93.7883 76.7008 93.8725C76.9543 93.9567 77.226 94 77.5005 94H86.801C87.3551 93.9999 87.8866 93.8234 88.2785 93.5093C88.6703 93.1952 88.8908 92.7685 88.8909 92.3243Z" fill="white"/></svg>',
+          tagline: 'You only get one launch. We don\u2019t leave anything to chance.',
+          description: 'A poorly executed launch can\u2019t be undone. Incentives set at TGE shape behaviour permanently \u2013 and once volatility, misalignment, or early dumping takes hold, the damage compounds. Incubat3 treats launch as a precision execution phase, designing distribution, access, and incentives to establish discipline and alignment from the first block, so the network starts stable and compounds forward instead of spending months recovering.',
+          buttons: [{ text: 'Book a Consultancy Call', type: 'primary', soon: true }],
+          bgType: 'video',
+          bgSrc: 'videos/launch.mp4'
+        },
+        {
+          id: 'mobile-trade',
+          title: 'Trade',
+          iconHTML: '<svg width="28" height="28" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M42.8885 40.6657V8.06867C42.8884 7.47927 42.6543 6.91403 42.2375 6.49728L36.3912 0.65102C35.9747 0.234326 35.4097 0.000150786 34.8205 0H2.22241C1.63302 8.78447e-05 1.06779 0.234263 0.651027 0.651027C0.234263 1.06779 8.78447e-05 1.63302 0 2.22241L0 34.8205C-1.79293e-06 35.1124 0.0574897 35.4014 0.169192 35.6711C0.280894 35.9408 0.44462 36.1858 0.65102 36.3922L6.49728 42.2381C6.70361 42.4445 6.94859 42.6083 7.21821 42.72C7.48784 42.8317 7.77683 42.8891 8.06867 42.8891H40.6657C41.2551 42.889 41.8204 42.6549 42.2371 42.2381C42.6539 41.8214 42.8881 41.2561 42.8881 40.6667" fill="white"/></svg>',
+          tagline: 'Markets are unpredictable, but behaviour can be strategically designed.',
+          description: 'After launch, trading behaviour defines both network health and investor quality. Short-term speculation may move price, but it also determines who earns future access and upside. Incubat3 treats trading as a signal layer, using market behaviour to inform reputation, incentives, and allocation across future launches \u2013 rewarding discipline and alignment on both sides of the market.',
+          buttons: [
+            { text: 'For Founders', type: 'primary', soon: true },
+            { text: 'For Traders', type: 'outline', soon: true }
+          ],
+          bgType: null
+        },
+        {
+          id: 'mobile-reward',
+          title: 'Reward',
+          iconHTML: '<svg width="32" height="30" viewBox="0 0 50 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 46.4598V9.2183C49.9999 8.54492 49.7269 7.89914 49.241 7.42301L42.4254 0.743776C41.9398 0.267712 41.2811 0.00017227 40.5942 0H2.59092C1.9038 0.000100361 1.24485 0.267643 0.758977 0.743788C0.273107 1.21993 0.000102411 1.86569 0 2.53906V39.7817C-2.09022e-06 40.1152 0.0670225 40.4454 0.197247 40.7535C0.327471 41.0616 0.518344 41.3415 0.758969 41.5774L7.57462 48.2562C7.81517 48.492 8.10076 48.6791 8.41509 48.8067C8.72942 48.9343 9.06633 49 9.40658 49H47.4087C48.0958 48.9999 48.7548 48.7324 49.2406 48.2562C49.7265 47.7801 49.9995 47.1343 49.9996 46.4609" fill="white"/></svg>',
+          tagline: 'Incubat3 turns on-chain & social reputation into lasting advantage.',
+          description: 'After launch, trading behaviour defines both network health and investor quality. Short-term speculation may move price, but it also determines who earns future access and upside. Incubat3 treats trading as a signal layer, using market behaviour to inform reputation, incentives, and allocation across future launches \u2013 rewarding discipline and alignment on both sides of the market.',
+          buttons: [
+            { text: 'Claim Station', type: 'primary', soon: true },
+            { text: 'Connect Wallet', type: 'outline', soon: true }
+          ],
+          bgType: 'video',
+          bgSrc: 'videos/reward3.mp4'
+        }
+      ];
+
+      features.forEach(function(f){
+        var section = document.createElement('div');
+        section.className = 'mobile-section mobile-section--feature';
+        section.id = f.id;
+
+        // Background
+        if(f.bgType === 'video'){
+          var bg = document.createElement('div');
+          bg.className = 'section-bg';
+          bg.innerHTML = '<video muted loop playsinline poster="" data-lazy-src="' + f.bgSrc + '"><source type="video/mp4"></video>';
+          section.appendChild(bg);
+        }
+
+        // Icon + title
+        var titleRow = document.createElement('div');
+        titleRow.className = 'section-icon-title';
+        titleRow.innerHTML = f.iconHTML + '<div class="m-title">' + f.title + '</div>';
+        section.appendChild(titleRow);
+
+        // Tagline
+        var tagline = document.createElement('div');
+        tagline.className = 'm-tagline';
+        tagline.textContent = f.tagline;
+        section.appendChild(tagline);
+
+        // Description
+        var desc = document.createElement('div');
+        desc.className = 'm-body';
+        desc.textContent = f.description;
+        section.appendChild(desc);
+
+        // Buttons
+        var btns = document.createElement('div');
+        btns.className = 'section-buttons';
+        f.buttons.forEach(function(b){
+          btns.appendChild(makeBtn(b.text, b.type, b.soon));
+        });
+        section.appendChild(btns);
+
+        page.appendChild(section);
+      });
+
+      // === ARC / AI SECTION ===
+      var arc = document.createElement('div');
+      arc.className = 'mobile-section mobile-section--arc';
+      arc.id = 'mobile-arc';
+
+      var arcVid = document.createElement('video');
+      arcVid.className = 'arc-video';
+      arcVid.muted = true;
+      arcVid.loop = true;
+      arcVid.playsInline = true;
+      arcVid.setAttribute('data-lazy-src', 'videos/arc.mp4');
+      arc.appendChild(arcVid);
+
+      var arcHeading = document.createElement('div');
+      arcHeading.className = 'm-heading';
+      arcHeading.textContent = 'Powered by AI & Reputation Analysis';
+      arc.appendChild(arcHeading);
+
+      var arcCards = [
+        {
+          img: 'images/hf_20260123_093008_25c1d8a7-7819-42e3-a1dc-9b017614ab15_1_05.png',
+          title: 'Build. Raise. Launch. Trade. Reward.',
+          desc: 'Incubat3 unifies the full lifecycle of a token network into one execution layer. What is fragmented across agencies, launchpads, tools, and platforms is mapped, coordinated, and run as a single system.'
+        },
+        {
+          img: 'images/screenshot_2026-01-07_at_11_06_16_1_03.png',
+          title: 'Arc: The Decentralised AI Operating System.',
+          desc: 'ARC is the intelligence layer powering execution. ARC provides configurable access to on-chain systems, DeFi primitives, and privacy-preserving AI \u2013 enabling adaptive decision-making across the Incubat3 system.'
+        },
+        {
+          img: 'images/hf_20260120_132328_fbc69f5d-8f4d-4676-8f2c-764aea814279_1_04.png',
+          title: 'Nucleus: Reputation and signal intelligence.',
+          desc: 'Nucleus interprets behaviour across on-chain and social systems, translating activity into actionable signal. It provides the reputation and context layer that informs access, incentives, and long-term alignment across networks built on Incubat3.'
+        }
+      ];
+
+      arcCards.forEach(function(c){
+        var card = document.createElement('div');
+        card.className = 'arc-card';
+        card.innerHTML = '<img src="' + c.img + '" alt="">'
+          + '<div class="m-subheading">' + c.title + '</div>'
+          + '<div class="m-body">' + c.desc + '</div>';
+        arc.appendChild(card);
+      });
+
+      page.appendChild(arc);
+
+      // === TAGLINE BEFORE FOOTER ===
+      var taglineSection = document.createElement('div');
+      taglineSection.className = 'mobile-section';
+      taglineSection.style.cssText = 'text-align:center;align-items:center;padding:60px 20px';
+      taglineSection.innerHTML = '<div class="m-heading" style="font-size:32px;line-height:1.3">Blueprinted execution.<br>End-to-end outcomes.<br>The Web3 superapp.</div>';
+      page.appendChild(taglineSection);
+
+      // === FOOTER ===
+      var footer = document.createElement('div');
+      footer.className = 'mobile-section mobile-section--footer';
+      footer.id = 'mobile-footer';
+
+      // Footer bg video
+      var footerBg = document.createElement('div');
+      footerBg.className = 'footer-bg';
+      footerBg.innerHTML = '<video muted loop playsinline data-lazy-src="videos/footer.mp4"><source type="video/mp4"></video>';
+      footer.appendChild(footerBg);
+
+      // Logo + title
+      footer.innerHTML += '<div style="display:flex;align-items:center;gap:12px;position:relative;z-index:1"><svg width="36" height="32" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg><div class="m-title" style="font-size:32px">Incubat3</div></div>';
+
+      // Get in touch
+      footer.innerHTML += '<div class="m-tagline" style="font-size:28px;position:relative;z-index:1">Get in touch.</div>';
+      footer.innerHTML += '<div style="padding:12px 20px;border:1px solid rgba(255,255,255,.3);border-radius:20px;font-size:15px;font-family:Poppins;color:rgba(255,255,255,.5);position:relative;z-index:1">Enter Your Email here</div>';
+      footer.innerHTML += '<div style="font-size:14px;font-family:Poppins;color:white;position:relative;z-index:1">contact@Incubat3.com</div>';
+
+      // Nav grid
+      var navGrid = document.createElement('div');
+      navGrid.className = 'footer-nav';
+      navGrid.innerHTML = '<div class="footer-nav-col"><div class="footer-nav-header">Navigation</div><div class="footer-nav-link">About</div><div class="footer-nav-link">Features</div><div class="footer-nav-link">Teams</div><div class="footer-nav-link">Service</div></div>'
+        + '<div class="footer-nav-col"><div class="footer-nav-header">Support</div><div class="footer-nav-link">Documentation</div><div class="footer-nav-link">Consultation</div></div>'
+        + '<div class="footer-nav-col"><div class="footer-nav-header">Legal</div><div class="footer-nav-link">Privacy</div><div class="footer-nav-link">Term</div><div class="footer-nav-link">Partner</div></div>'
+        + '<div class="footer-nav-col"><div class="footer-nav-header">Info</div><div class="footer-nav-link">About us</div><div class="footer-nav-link">Blog</div><div class="footer-nav-link">Contacts</div></div>';
+      footer.appendChild(navGrid);
+
+      // Social links
+      var social = document.createElement('div');
+      social.className = 'footer-social';
+      social.innerHTML = '<a href="https://x.com/I3_Official" target="_blank" rel="noopener noreferrer">X (Twitter)</a><span>Telegram</span>';
+      footer.appendChild(social);
+
+      // Copyright
+      footer.innerHTML += '<div class="footer-copyright">\u00A9 2026 \u2014 Copyright Incubat3</div>';
+
+      page.appendChild(footer);
+
+      // === LAZY-LOAD VIDEOS ===
+      var videoObserver = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(!entry.isIntersecting) return;
+          var el = entry.target;
+          var lazySrc = el.getAttribute('data-lazy-src');
+          if(lazySrc){
+            var source = el.querySelector('source');
+            if(source){
+              source.setAttribute('src', lazySrc);
+              el.load();
+            } else {
+              el.src = lazySrc;
+              el.load();
+            }
+            el.removeAttribute('data-lazy-src');
+            el.play().catch(function(){});
+            videoObserver.unobserve(el);
+          }
+        });
+      }, { rootMargin: '200px' });
+
+      document.querySelectorAll('[data-lazy-src]').forEach(function(el){
+        videoObserver.observe(el);
+      });
+    }
+
+    /* =========================================
+       MOBILE: Navigation
+       ========================================= */
+    function buildMobileNav(){
+      var toggle = document.createElement('button');
+      toggle.className = 'mobile-nav-toggle';
+      toggle.setAttribute('aria-label', 'Menu');
+      toggle.innerHTML = '<span></span><span></span><span></span>';
+
+      var drawer = document.createElement('nav');
+      drawer.className = 'mobile-nav-drawer';
+
+      var overlay = document.createElement('div');
+      overlay.className = 'mobile-nav-overlay';
+
+      var sections = [
+        { name: 'INCUBAT3', id: 'mobile-hero' },
+        { name: 'BUILD', id: 'mobile-build' },
+        { name: 'RAISE', id: 'mobile-raise' },
+        { name: 'LAUNCH', id: 'mobile-launch' },
+        { name: 'TRADE', id: 'mobile-trade' },
+        { name: 'REWARD', id: 'mobile-reward' }
+      ];
+
+      sections.forEach(function(s){
+        var a = document.createElement('a');
+        a.href = '#' + s.id;
+        a.textContent = s.name;
+        a.addEventListener('click', function(e){
+          e.preventDefault();
+          close();
+          var target = document.getElementById(s.id);
+          if(target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+        drawer.appendChild(a);
+      });
+
+      function close(){
+        toggle.classList.remove('mobile-nav-toggle--open');
+        drawer.classList.remove('mobile-nav-drawer--open');
+        overlay.classList.remove('mobile-nav-overlay--visible');
+      }
+
+      toggle.addEventListener('click', function(){
+        var isOpen = drawer.classList.contains('mobile-nav-drawer--open');
+        if(isOpen){
+          close();
+        } else {
+          toggle.classList.add('mobile-nav-toggle--open');
+          drawer.classList.add('mobile-nav-drawer--open');
+          overlay.classList.add('mobile-nav-overlay--visible');
+        }
+      });
+
+      overlay.addEventListener('click', close);
+
+      document.body.appendChild(toggle);
+      document.body.appendChild(drawer);
+      document.body.appendChild(overlay);
+    }
+
+    /* =========================================
+       MOBILE: Scroll animations
+       ========================================= */
+    function setupMobileAnimations(){
+      if(typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.mobile-section > *:not(.hero-bg):not(.section-bg):not(.footer-bg)').forEach(function(el){
+        gsap.fromTo(el,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 92%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      });
+    }
+
+    /* Orientation change: reload if crossing mobile threshold */
+    window.addEventListener('resize', (function(){
+      var timer;
+      return function(){
+        clearTimeout(timer);
+        timer = setTimeout(function(){
+          var nowMobile = window.innerWidth <= 768;
+          if(nowMobile !== isMobile) location.reload();
+        }, 300);
+      };
+    })());
 
   })();
   </script>
