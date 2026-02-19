@@ -712,7 +712,8 @@
     var page = document.querySelector('.I3HomePage');
     if(!page) return;
 
-    var isMobile = window.innerWidth <= 768;
+    var isMobile = window.innerWidth <= 768 || (window.innerWidth <= 1024 && 'ontouchstart' in window);
+    document.title = isMobile ? 'I3 Mobile (' + window.innerWidth + 'px)' : 'I3 Desktop (' + window.innerWidth + 'px)';
 
     if(!isMobile){
     /* =========================================
