@@ -1304,9 +1304,17 @@
       /* =========================================
          MOBILE LAYOUT
          ========================================= */
-      buildMobileLayout(page);
-      buildMobileNav();
-      setupMobileAnimations();
+      try {
+        buildMobileLayout(page);
+        buildMobileNav();
+        setupMobileAnimations();
+      } catch(e) {
+        // If mobile build fails, show original content scaled down
+        console.error('Mobile layout error:', e);
+        Array.from(page.children).forEach(function(el){ el.classList.remove('desktop-only'); });
+        page.style.width = '';
+        page.style.height = '';
+      }
     }
 
     /* =========================================
@@ -1539,37 +1547,20 @@
       footer.className = 'mobile-section mobile-section--footer';
       footer.id = 'mobile-footer';
 
-      // Footer bg video
-      var footerBg = document.createElement('div');
-      footerBg.className = 'footer-bg';
-      footerBg.innerHTML = '<video muted loop playsinline data-lazy-src="videos/footer.mp4"><source type="video/mp4"></video>';
-      footer.appendChild(footerBg);
-
-      // Logo + title
-      footer.innerHTML += '<div style="display:flex;align-items:center;gap:12px;position:relative;z-index:1"><svg width="36" height="32" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg><div class="m-title" style="font-size:32px">Incubat3</div></div>';
-
-      // Get in touch
-      footer.innerHTML += '<div class="m-tagline" style="font-size:28px;position:relative;z-index:1">Get in touch.</div>';
-      footer.innerHTML += '<div style="padding:12px 20px;border:1px solid rgba(255,255,255,.3);border-radius:20px;font-size:15px;font-family:Poppins;color:rgba(255,255,255,.5);position:relative;z-index:1">Enter Your Email here</div>';
-      footer.innerHTML += '<div style="font-size:14px;font-family:Poppins;color:white;position:relative;z-index:1">contact@Incubat3.com</div>';
-
-      // Nav grid
-      var navGrid = document.createElement('div');
-      navGrid.className = 'footer-nav';
-      navGrid.innerHTML = '<div class="footer-nav-col"><div class="footer-nav-header">Navigation</div><div class="footer-nav-link">About</div><div class="footer-nav-link">Features</div><div class="footer-nav-link">Teams</div><div class="footer-nav-link">Service</div></div>'
+      // Build footer HTML all at once to avoid innerHTML+= destroying appended nodes
+      footer.innerHTML = '<div class="footer-bg"><video muted loop playsinline data-lazy-src="videos/footer.mp4"><source type="video/mp4"></video></div>'
+        + '<div style="display:flex;align-items:center;gap:12px;position:relative;z-index:1"><svg width="36" height="32" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg><div class="m-title" style="font-size:32px">Incubat3</div></div>'
+        + '<div class="m-tagline" style="font-size:28px;position:relative;z-index:1">Get in touch.</div>'
+        + '<div style="padding:12px 20px;border:1px solid rgba(255,255,255,.3);border-radius:20px;font-size:15px;font-family:Poppins;color:rgba(255,255,255,.5);position:relative;z-index:1">Enter Your Email here</div>'
+        + '<div style="font-size:14px;font-family:Poppins;color:white;position:relative;z-index:1">contact@Incubat3.com</div>'
+        + '<div class="footer-nav">'
+        + '<div class="footer-nav-col"><div class="footer-nav-header">Navigation</div><div class="footer-nav-link">About</div><div class="footer-nav-link">Features</div><div class="footer-nav-link">Teams</div><div class="footer-nav-link">Service</div></div>'
         + '<div class="footer-nav-col"><div class="footer-nav-header">Support</div><div class="footer-nav-link">Documentation</div><div class="footer-nav-link">Consultation</div></div>'
         + '<div class="footer-nav-col"><div class="footer-nav-header">Legal</div><div class="footer-nav-link">Privacy</div><div class="footer-nav-link">Term</div><div class="footer-nav-link">Partner</div></div>'
-        + '<div class="footer-nav-col"><div class="footer-nav-header">Info</div><div class="footer-nav-link">About us</div><div class="footer-nav-link">Blog</div><div class="footer-nav-link">Contacts</div></div>';
-      footer.appendChild(navGrid);
-
-      // Social links
-      var social = document.createElement('div');
-      social.className = 'footer-social';
-      social.innerHTML = '<a href="https://x.com/I3_Official" target="_blank" rel="noopener noreferrer">X (Twitter)</a><span>Telegram</span>';
-      footer.appendChild(social);
-
-      // Copyright
-      footer.innerHTML += '<div class="footer-copyright">\u00A9 2026 \u2014 Copyright Incubat3</div>';
+        + '<div class="footer-nav-col"><div class="footer-nav-header">Info</div><div class="footer-nav-link">About us</div><div class="footer-nav-link">Blog</div><div class="footer-nav-link">Contacts</div></div>'
+        + '</div>'
+        + '<div class="footer-social"><a href="https://x.com/I3_Official" target="_blank" rel="noopener noreferrer">X (Twitter)</a><span>Telegram</span></div>'
+        + '<div class="footer-copyright">\u00A9 2026 \u2014 Copyright Incubat3</div>';
 
       page.appendChild(footer);
 
