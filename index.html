@@ -56,7 +56,7 @@
     .scroller__item:hover{background:rgba(255,255,255,.06)}
     .scroller__item:last-child{height:90px}
     .scroller__item--active{height:108px;background:#00f;border-color:#00f}
-    .scroller__line{width:1px;height:71px;background:rgba(255,255,255,.18)}
+    .scroller__line{display:none}
 
     /* --- Fix Raise section --- */
     .Raise{gap:24px!important;height:auto!important;overflow:visible!important}
@@ -1155,10 +1155,10 @@
       var topVal = parseInt(img.style.top) || 0;
       if(topVal > 6000) img.style.top = (topVal + arcOffset) + 'px';
     });
-    // "Powered by AI & Reputation Analysis" heading (7739)
+    // "Powered by AI & Reputation Analysis" heading (7739) — less offset to add gap after arc video
     page.querySelectorAll('.HeroSubtitle').forEach(function(el){
       var t = parseFloat(el.style.top);
-      if(Math.abs(t - 7739) < 1) el.style.top = (t + arcOffset) + 'px';
+      if(Math.abs(t - 7739) < 1) el.style.top = (t + arcOffset + 80) + 'px';
     });
     // Three-icon section: Evenly space the 3 columns
     // Col1=60, Col2=530, Col3=1000 (gap ~50px between each)
