@@ -20,10 +20,13 @@
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
     @media(max-width:768px){
-      .loader video{object-fit:contain;background:#000}
-      .loader::before,.loader::after{content:'';position:absolute;left:0;right:0;height:120px;z-index:1;pointer-events:none}
-      .loader::before{top:0;background:linear-gradient(180deg,#000 0%,transparent 100%)}
-      .loader::after{bottom:0;background:linear-gradient(0deg,#000 0%,transparent 100%)}
+      .loader{align-items:center;justify-content:center}
+      .loader video{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:auto;object-fit:contain;background:#000}
+      .loader::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:
+        linear-gradient(180deg,#000 0%,rgba(0,0,0,0.4) 15%,transparent 30%,transparent 70%,rgba(0,0,0,0.4) 85%,#000 100%),
+        linear-gradient(90deg,#000 0%,rgba(0,0,0,0.5) 8%,transparent 25%,transparent 75%,rgba(0,0,0,0.5) 92%,#000 100%),
+        radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.6) 80%,#000 100%)
+      }
     }
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
