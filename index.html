@@ -19,7 +19,12 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
-    @media(max-width:768px){.loader video{object-fit:contain;transform:scale(0.92);background:#000}}
+    @media(max-width:768px){
+      .loader video{object-fit:contain;background:#000}
+      .loader::before,.loader::after{content:'';position:absolute;left:0;right:0;height:120px;z-index:1;pointer-events:none}
+      .loader::before{top:0;background:linear-gradient(180deg,#000 0%,transparent 100%)}
+      .loader::after{bottom:0;background:linear-gradient(0deg,#000 0%,transparent 100%)}
+    }
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
     /* --- Site wrapper --- */
@@ -682,6 +687,12 @@
     var loader = document.getElementById('loader');
     var site = document.getElementById('site');
     var shown = false;
+
+    // Use portrait loader on mobile
+    if(window.innerWidth <= 768){
+      var src = lv.querySelector('source');
+      if(src){ src.setAttribute('src','loadermobile.mp4'); lv.load(); }
+    }
 
     function showSite(){
       if(shown) return;
