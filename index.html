@@ -19,7 +19,7 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
-    @media(max-width:768px){.loader video{object-fit:contain;transform:scale(1.03);background:#000}}
+    @media(max-width:768px){.loader video{object-fit:cover;transform:scale(0.95);background:#000}}
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
     /* --- Site wrapper --- */
@@ -1629,7 +1629,7 @@
         + '<div class="footer-nav-col"><div class="footer-nav-header">Legal</div><div class="footer-nav-link">Privacy</div><div class="footer-nav-link">Term</div><div class="footer-nav-link">Partner</div></div>'
         + '<div class="footer-nav-col"><div class="footer-nav-header">Info</div><div class="footer-nav-link">About us</div><div class="footer-nav-link">Blog</div><div class="footer-nav-link">Contacts</div></div>'
         + '</div>'
-        + '<div class="footer-social"><a href="https://x.com/I3_Official" target="_blank" rel="noopener noreferrer">X (Twitter)</a><span>Telegram</span></div>'
+        + '<div class="footer-social"><a href="https://x.com/I3_Official" target="_blank" rel="noopener noreferrer">X (Twitter)</a><a href="https://t.me/PIQARIO" target="_blank" rel="noopener noreferrer">Telegram</a></div>'
         + '<div class="footer-copyright">\u00A9 2026 \u2014 Copyright Incubat3</div>';
 
       page.appendChild(footer);
