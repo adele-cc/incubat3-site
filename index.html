@@ -19,7 +19,7 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
-    @media(max-width:768px){.loader video{object-fit:cover;transform:scale(0.95);background:#000}}
+    @media(max-width:768px){.loader video{object-fit:cover;transform:scale(0.97);background:#000}}
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
     /* --- Site wrapper --- */
@@ -112,7 +112,7 @@
       /* Mobile sections */
       .mobile-section{position:relative;width:100%;padding:60px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box}
       .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-start;padding-top:16px;padding-bottom:40px;overflow:hidden}
-      .mobile-section--hero .hero-bg{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;overflow:hidden}
+      .mobile-section--hero .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
       .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:cover;filter:blur(8px)}
       .mobile-section--hero .hero-bg::after{content:'';position:absolute;inset:0;background:
         linear-gradient(180deg,rgba(0,0,0,0.6) 0%,transparent 30%,transparent 60%,rgba(0,0,0,0.8) 100%),
@@ -1388,6 +1388,10 @@
       heroInner.appendChild(makeBtn('Connect Wallet', 'outline', true));
       hero.appendChild(heroInner);
       page.appendChild(hero);
+
+      // Lock hero height to prevent resize when address bar collapses
+      hero.style.height = window.innerHeight + 'px';
+      hero.style.minHeight = window.innerHeight + 'px';
 
       // Force-play hero video on mobile (after DOM insertion)
       setTimeout(function(){
