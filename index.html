@@ -19,7 +19,7 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
-    @media(max-width:768px){.loader video{object-fit:cover;transform:scale(0.9);background:#000}}
+    @media(max-width:768px){.loader video{object-fit:cover;transform:scale(0.82);background:#000}}
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
     /* --- Site wrapper --- */
@@ -133,14 +133,14 @@
       .mobile-section--superapp .superapp-buttons .m-btn{flex:1;max-width:180px}
 
       .mobile-section--feature{padding-top:50px;padding-bottom:50px;overflow:hidden;position:relative}
-      .mobile-section--feature .section-fade-top{position:absolute;top:0;left:0;right:0;height:80px;z-index:1;pointer-events:none}
+      .mobile-section--feature .section-fade-top{position:absolute;top:0;left:0;right:0;height:50px;z-index:1;pointer-events:none}
       .mobile-section--feature .section-fade-bottom{position:absolute;bottom:0;left:0;right:0;height:80px;z-index:1;pointer-events:none}
       .mobile-section--feature .section-icon-title{display:flex;align-items:center;gap:12px}
       .mobile-section--feature .section-icon-title img{width:40px;height:auto;flex-shrink:0}
       .mobile-section--feature .section-icon-title svg{flex-shrink:0}
       .mobile-section--feature .section-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
       .mobile-section--feature .section-bg video,.mobile-section--feature .section-bg img{width:100%;height:100%;object-fit:cover;filter:blur(18px);mix-blend-mode:screen;transform:scale(1.2)}
-      .mobile-section--feature>*{position:relative;z-index:1}
+      .mobile-section--feature>*{position:relative;z-index:2}
       .mobile-section--feature .section-buttons{display:flex;flex-direction:column;gap:12px;margin-top:8px}
 
       .mobile-section--arc{text-align:center;align-items:center;gap:40px;position:relative}
