@@ -112,8 +112,13 @@
       .mobile-section{position:relative;width:100%;padding:60px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box}
       .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-start;padding-top:60px;padding-bottom:40px;overflow:hidden}
       .mobile-section--hero .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
-      .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:contain;background:#000;filter:blur(3px)}
-      .mobile-section--hero .hero-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(180deg,transparent,black)}
+      .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:cover;filter:blur(10px);transform:scale(1.05)}
+      .mobile-section--hero .hero-bg::after{content:'';position:absolute;inset:0;background:
+        linear-gradient(180deg,rgba(0,0,0,0.6) 0%,transparent 30%,transparent 60%,rgba(0,0,0,0.8) 100%),
+        radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,0.7) 100%),
+        linear-gradient(180deg,rgba(20,10,40,0.35) 0%,rgba(10,5,30,0.35) 100%)
+      }
+      .mobile-section--hero .hero-glow{position:absolute;top:25%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);z-index:1;pointer-events:none}
       .mobile-section--hero .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:flex-start;gap:24px;width:100%;height:auto}
       .mobile-section--hero .hero-frame{position:absolute;inset:0;z-index:1;pointer-events:none;padding:15px}
 
@@ -1357,6 +1362,7 @@
       hero.className = 'mobile-section mobile-section--hero';
       hero.id = 'mobile-hero';
       hero.innerHTML = '<div class="hero-bg"><video autoplay muted loop playsinline poster="images/hero_18.png"><source src="assets/hero.mp4" type="video/mp4"></video></div>'
+        + '<div class="hero-glow"></div>'
         + '<div class="hero-frame"><svg width="100%" height="100%" viewBox="0 0 1452 1279" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1346.26 646.943L1450.07 859.635L1448.77 1217.85L1394.63 1273.25C1394.63 1273.25 558.654 1274.19 140.644 1274.86C106.145 1274.91 37.148 1277.72 37.148 1277.72L0.501587 1242.19C0.501587 1242.19 2.06767 1032.95 2.20191 928.325C2.42563 790.453 1.57547 514.755 1.57547 514.755L46.5445 467.187L394.215 466.337L436.947 508.222L435.113 870.106L481.916 919.017L977.47 914.631L1014.43 870.196L976.262 826.879L595.39 824.104L546.752 774.881L543.441 516.5L591.811 466.337L965.344 464.054L1013.09 415.591L963.465 365.965L575.076 365.875L532.21 324.035L531.583 39.7003L569.841 1.39519L1413.2 0.500214L1451.5 38.0446L1450.03 470.096L1346.17 646.943H1346.26Z" stroke="white" stroke-opacity="0.4" stroke-width="3" stroke-miterlimit="10"/><path d="M219.234 361.491C157.634 361.491 34.4342 361.805 34.4342 361.805L1.30635 329.908L0.500534 34.5475L31.6586 0.94825L408.645 0.500259L437.788 31.9492L437.296 330.983L404.034 362.298C404.034 362.298 280.834 361.984 219.234 361.984V361.491Z" stroke="white" stroke-opacity="0.4" stroke-width="3" stroke-miterlimit="10"/></svg></div>';
 
       // All hero content inside one inner container (fits inside the vector frame)
