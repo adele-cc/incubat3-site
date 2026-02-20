@@ -110,7 +110,7 @@
 
       /* Mobile sections */
       .mobile-section{position:relative;width:100%;padding:60px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box}
-      .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-start;padding-top:60px;padding-bottom:40px;overflow:hidden}
+      .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-start;padding-top:16px;padding-bottom:40px;overflow:hidden}
       .mobile-section--hero .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
       .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:cover;filter:blur(8px)}
       .mobile-section--hero .hero-bg::after{content:'';position:absolute;inset:0;background:
@@ -122,7 +122,10 @@
       .mobile-section--hero .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:flex-start;gap:24px;width:100%;height:auto}
       .mobile-section--hero .hero-frame{position:absolute;bottom:0;right:-20px;width:70%;height:60%;z-index:1;pointer-events:none;opacity:0.15}
 
-      .mobile-section--superapp{text-align:center;align-items:center;padding-top:40px}
+      .mobile-section--superapp{text-align:center;align-items:center;padding-top:20px;overflow:hidden}
+      .mobile-section--superapp .superapp-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+      .mobile-section--superapp .superapp-bg img{width:100%;height:100%;object-fit:cover;filter:blur(40px);mix-blend-mode:screen;opacity:0.6}
+      .mobile-section--superapp>*{position:relative;z-index:1}
       .mobile-section--superapp .partner-logos{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;padding:10px 0}
       .mobile-section--superapp .partner-logos img{height:24px;width:auto}
       .mobile-section--superapp .superapp-screenshot{width:100%;border-radius:8px;-webkit-mask-image:linear-gradient(180deg,black 0%,black 60%,transparent 100%);mask-image:linear-gradient(180deg,black 0%,black 60%,transparent 100%)}
@@ -1365,31 +1368,41 @@
         + '<div class="hero-glow"></div>'
         + '<div class="hero-frame"><svg width="100%" height="100%" viewBox="0 0 1452 1279" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1346.26 646.943L1450.07 859.635L1448.77 1217.85L1394.63 1273.25C1394.63 1273.25 558.654 1274.19 140.644 1274.86C106.145 1274.91 37.148 1277.72 37.148 1277.72L0.501587 1242.19C0.501587 1242.19 2.06767 1032.95 2.20191 928.325C2.42563 790.453 1.57547 514.755 1.57547 514.755L46.5445 467.187L394.215 466.337L436.947 508.222L435.113 870.106L481.916 919.017L977.47 914.631L1014.43 870.196L976.262 826.879L595.39 824.104L546.752 774.881L543.441 516.5L591.811 466.337L965.344 464.054L1013.09 415.591L963.465 365.965L575.076 365.875L532.21 324.035L531.583 39.7003L569.841 1.39519L1413.2 0.500214L1451.5 38.0446L1450.03 470.096L1346.17 646.943H1346.26Z" stroke="white" stroke-opacity="0.4" stroke-width="3" stroke-miterlimit="10"/><path d="M219.234 361.491C157.634 361.491 34.4342 361.805 34.4342 361.805L1.30635 329.908L0.500534 34.5475L31.6586 0.94825L408.645 0.500259L437.788 31.9492L437.296 330.983L404.034 362.298C404.034 362.298 280.834 361.984 219.234 361.984V361.491Z" stroke="white" stroke-opacity="0.4" stroke-width="3" stroke-miterlimit="10"/></svg></div>';
 
-      // All hero content inside one inner container (fits inside the vector frame)
+      // Hero top bar: icon on left, aligned with hamburger on right
+      var heroTopBar = document.createElement('div');
+      heroTopBar.style.cssText = 'position:relative;z-index:2;display:flex;align-items:center;height:44px';
+      heroTopBar.innerHTML = '<svg width="36" height="32" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg>';
+      hero.appendChild(heroTopBar);
+
+      // Hero main content: title, then spacer, then subtitle + button lower
       var heroInner = document.createElement('div');
       heroInner.className = 'hero-inner';
-      heroInner.innerHTML = '<div style="margin-bottom:20px"><svg width="40" height="35" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg></div>'
-        + '<div class="m-tagline" style="font-size:36px;line-height:44px">Incubat3<br>Your all-in-one launch partner.</div>'
-        + '<div class="m-body" style="margin-top:24px;margin-bottom:24px">The Web3 superapp powered by AI &amp; reputation analysis.</div>';
+      heroInner.style.cssText = 'flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2';
+      heroInner.innerHTML = '<div class="m-tagline" style="font-size:36px;line-height:44px">Incubat3<br>Your all-in-one launch partner.</div>'
+        + '<div style="flex:1;min-height:60px"></div>'
+        + '<div class="m-body" style="margin-bottom:24px">The Web3 superapp powered by AI &amp; reputation analysis.</div>';
       heroInner.appendChild(makeBtn('Connect Wallet', 'outline', true));
       hero.appendChild(heroInner);
       page.appendChild(hero);
 
-      // Force-play hero video on mobile
-      var heroVid = hero.querySelector('.hero-bg video');
-      if(heroVid){
-        heroVid.play().catch(function(){});
-        document.addEventListener('touchstart', function startHeroVid(){
+      // Force-play hero video on mobile (after DOM insertion)
+      setTimeout(function(){
+        var heroVid = document.querySelector('.mobile-section--hero .hero-bg video');
+        if(heroVid){
           heroVid.play().catch(function(){});
-          document.removeEventListener('touchstart', startHeroVid);
-        }, {once:true});
-      }
+          document.addEventListener('touchstart', function startHeroVid(){
+            heroVid.play().catch(function(){});
+            document.removeEventListener('touchstart', startHeroVid);
+          }, {once:true});
+        }
+      }, 100);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
       superapp.className = 'mobile-section mobile-section--superapp';
       superapp.id = 'mobile-incubat3';
-      superapp.innerHTML = '<div class="m-title" style="font-size:48px">Incubat3</div>'
+      superapp.innerHTML = '<div class="superapp-bg"><img src="images/incubat3-bg.png" alt=""></div>'
+        + '<div class="m-title" style="font-size:48px">Incubat3</div>'
         + '<div class="m-body" style="text-align:left">Incubat3 is the Web3 superapp for building, launching, and scaling token networks end-to-end.<br><br>Incubat3 unifies what is currently fragmented across agencies, task platforms, launchpads, advisors, and trading tools into one blueprinted execution system. Incubat3 maps, runs, and optimises the entire lifecycle, from GTM strategy and capital formation to post-TGE market behaviour and long-term incentives. Powered by AI and reputation intelligence, and delivered through a network of system partners, Incubat3 turns launches into repeatable, data-driven outcomes, making it the operating layer where token networks are actually built, activated, and sustained.</div>'
         + '<div class="partner-logos">'
         + '<img src="images/cc-full-logo-white_1_12.png" alt="CC">'
