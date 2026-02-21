@@ -691,15 +691,6 @@
     var site = document.getElementById('site');
     var shown = false;
 
-    // Use portrait loader on mobile
-    if(window.innerWidth <= 768){
-      var src = lv.querySelector('source');
-      if(src){
-        src.setAttribute('src','I3_Loader_Mobile.mp4');
-        lv.load();
-      }
-    }
-
     function showSite(){
       if(shown) return;
       shown = true;
@@ -707,11 +698,21 @@
       site.classList.add('site-wrap--visible');
     }
 
-    lv.addEventListener('canplay', function(){
+    // Use portrait loader on mobile
+    if(window.innerWidth <= 768){
+      var src = lv.querySelector('source');
+      if(src){
+        src.setAttribute('src','I3_Loader_Mobile.mp4');
+        lv.addEventListener('loadeddata', function(){
+          lv.play().catch(function(){ showSite(); });
+        });
+        lv.addEventListener('ended', showSite);
+        lv.load();
+      }
+    } else {
       lv.play().catch(function(){ showSite(); });
-    });
-    lv.play().catch(function(){});
-    lv.addEventListener('ended', showSite);
+      lv.addEventListener('ended', showSite);
+    }
     setTimeout(showSite, window.innerWidth <= 768 ? 8000 : 10000);
 
     /* =========================================
