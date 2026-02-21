@@ -208,8 +208,9 @@
   <!-- LOADER -->
   <div id="loader" class="loader">
     <video id="loader-video" autoplay muted playsinline>
-      <source src="Loader.mp4" type="video/mp4">
+      <source src="I3_Loader_Mobile.mp4" type="video/mp4">
     </video>
+    <script>if(window.innerWidth>768){var s=document.querySelector('#loader-video source');s.setAttribute('src','Loader.mp4');document.getElementById('loader-video').load();}</script>
   </div>
 
   <!-- FIXED SCROLLER -->
@@ -698,21 +699,8 @@
       site.classList.add('site-wrap--visible');
     }
 
-    // Use portrait loader on mobile
-    if(window.innerWidth <= 768){
-      var src = lv.querySelector('source');
-      if(src){
-        src.setAttribute('src','I3_Loader_Mobile.mp4');
-        lv.addEventListener('loadeddata', function(){
-          lv.play().catch(function(){ showSite(); });
-        });
-        lv.addEventListener('ended', showSite);
-        lv.load();
-      }
-    } else {
-      lv.play().catch(function(){ showSite(); });
-      lv.addEventListener('ended', showSite);
-    }
+    lv.play().catch(function(){ showSite(); });
+    lv.addEventListener('ended', showSite);
     setTimeout(showSite, window.innerWidth <= 768 ? 8000 : 10000);
 
     /* =========================================
@@ -1344,12 +1332,7 @@
         buildMobileNav();
         setupMobileAnimations();
       } catch(e) {
-        // If mobile build fails, show error + original content
         console.error('Mobile layout error:', e);
-        var errDiv = document.createElement('div');
-        errDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:20px;background:red;color:white;font-size:14px;z-index:99999;word-break:break-all';
-        errDiv.textContent = 'ERROR: ' + e.message + ' | STACK: ' + (e.stack || 'none');
-        document.body.appendChild(errDiv);
         Array.from(page.children).forEach(function(el){ el.classList.remove('desktop-only'); });
         page.style.width = '';
         page.style.height = '';
