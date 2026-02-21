@@ -27,7 +27,12 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
-    @media(max-width:768px){.loader video{object-fit:cover;transform:scale(0.97);background:#000}}
+    @media(max-width:768px){
+      .loader video{display:none}
+      .loader{justify-content:center;align-items:center}
+      .loader-mobile-logo{animation:loaderPulse 2s ease-in-out infinite}
+      @keyframes loaderPulse{0%{opacity:0;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0.8)}}
+    }
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
     /* --- Site wrapper --- */
@@ -210,6 +215,7 @@
     <video id="loader-video" autoplay muted playsinline preload="auto">
       <source src="Loader.mp4" type="video/mp4">
     </video>
+    <svg class="loader-mobile-logo" width="80" height="70" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg>
   </div>
 
   <!-- FIXED SCROLLER -->
@@ -698,11 +704,16 @@
       site.classList.add('site-wrap--visible');
     }
 
-    lv.muted = true;
-    lv.playsInline = true;
-    lv.play().catch(function(){ showSite(); });
-    lv.addEventListener('ended', showSite);
-    setTimeout(showSite, window.innerWidth <= 768 ? 8000 : 10000);
+    if(window.innerWidth <= 768){
+      // Mobile: skip video loader, show logo pulse for 3s
+      setTimeout(showSite, 3000);
+    } else {
+      lv.muted = true;
+      lv.playsInline = true;
+      lv.play().catch(function(){ showSite(); });
+      lv.addEventListener('ended', showSite);
+      setTimeout(showSite, 10000);
+    }
 
     /* =========================================
        HELPER: replace an <img> with a <video>
@@ -736,7 +747,6 @@
     if(!page) return;
 
     var isMobile = window.innerWidth <= 768 || (window.innerWidth <= 1024 && 'ontouchstart' in window);
-    document.title = isMobile ? 'I3 Mobile (' + window.innerWidth + 'px)' : 'I3 Desktop (' + window.innerWidth + 'px)';
 
     if(!isMobile){
     /* =========================================
@@ -1423,20 +1433,57 @@
       hero.style.height = window.innerHeight + 'px';
       hero.style.minHeight = window.innerHeight + 'px';
 
-      // Force-play hero video on mobile (after DOM insertion)
-      setTimeout(function(){
-        heroVideo.muted = true;
-        heroVideo.play().catch(function(){});
-      }, 500);
+      /* =========================================
+         MOBILE VIDEO PLAY SYSTEM
+         Browsers block autoplay even for muted+playsinline.
+         Solution: play videos on user gesture (touch/click),
+         and re-try as lazy-loaded videos become ready.
+         ========================================= */
+      var userInteracted = false;
+      var mobileVideoQueue = [];
 
-      // On first touch, force-play ALL mobile videos
-      document.addEventListener('touchstart', function(){
-        var allVids = document.querySelectorAll('video');
-        for(var i = 0; i < allVids.length; i++){
-          allVids[i].muted = true;
-          allVids[i].play().catch(function(){});
+      function attemptPlay(vid){
+        if(!vid || !vid.paused) return;
+        vid.muted = true;
+        try{ var p = vid.play(); if(p && p.catch) p.catch(function(){}); } catch(e){}
+      }
+
+      function playAllReady(){
+        for(var i = 0; i < mobileVideoQueue.length; i++){
+          var v = mobileVideoQueue[i];
+          if(v && v.readyState >= 2 && v.paused) attemptPlay(v);
         }
-      }, false);
+      }
+
+      function onUserGesture(){
+        if(!userInteracted){
+          userInteracted = true;
+          // First gesture: immediately try hero video
+          attemptPlay(heroVideo);
+        }
+        playAllReady();
+      }
+
+      // Listen on multiple events with capture for maximum reliability
+      ['touchstart','touchend','click'].forEach(function(evt){
+        document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
+      });
+
+      // Throttled scroll: retry paused videos after user has interacted
+      var scrollPlayTimer;
+      window.addEventListener('scroll', function(){
+        if(!userInteracted) return;
+        clearTimeout(scrollPlayTimer);
+        scrollPlayTimer = setTimeout(playAllReady, 200);
+      }, {passive:true});
+
+      // Register hero video
+      mobileVideoQueue.push(heroVideo);
+      heroVideo.addEventListener('canplay', function(){
+        if(userInteracted) attemptPlay(heroVideo);
+      });
+      // Attempt immediate play (works on some devices)
+      attemptPlay(heroVideo);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1691,7 +1738,7 @@
 
       page.appendChild(footer);
 
-      // === LAZY-LOAD VIDEOS ===
+      // === LAZY-LOAD VIDEOS (integrated with mobile play system) ===
       var videoObserver = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
           if(!entry.isIntersecting) return;
@@ -1700,11 +1747,16 @@
           if(lazySrc){
             el.muted = true;
             el.playsInline = true;
+            el.setAttribute('playsinline', '');
+            el.setAttribute('webkit-playsinline', '');
             el.src = lazySrc;
             el.removeAttribute('data-lazy-src');
             el.load();
-            el.addEventListener('canplay', function(){ el.play().catch(function(){}); });
-            el.play().catch(function(){});
+            // Register in mobile play queue
+            mobileVideoQueue.push(el);
+            el.addEventListener('canplay', function(){
+              if(userInteracted) attemptPlay(el);
+            });
             videoObserver.unobserve(el);
           }
         });
