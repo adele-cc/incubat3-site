@@ -694,7 +694,10 @@
     // Use portrait loader on mobile
     if(window.innerWidth <= 768){
       var src = lv.querySelector('source');
-      if(src){ src.setAttribute('src','I3_Loader_Mobile.mp4'); lv.load(); }
+      if(src){
+        src.setAttribute('src','I3_Loader_Mobile.mp4');
+        lv.load();
+      }
     }
 
     function showSite(){
@@ -704,7 +707,10 @@
       site.classList.add('site-wrap--visible');
     }
 
-    lv.play().catch(function(){ showSite(); });
+    lv.addEventListener('canplay', function(){
+      lv.play().catch(function(){ showSite(); });
+    });
+    lv.play().catch(function(){});
     lv.addEventListener('ended', showSite);
     setTimeout(showSite, window.innerWidth <= 768 ? 8000 : 10000);
 
