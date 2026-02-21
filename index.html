@@ -1418,13 +1418,21 @@
       setTimeout(function(){
         var heroVid = document.querySelector('.mobile-section--hero .hero-bg video');
         if(heroVid){
+          heroVid.muted = true;
+          heroVid.playsInline = true;
           heroVid.play().catch(function(){});
-          document.addEventListener('touchstart', function startHeroVid(){
-            heroVid.play().catch(function(){});
-            document.removeEventListener('touchstart', startHeroVid);
-          }, {once:true});
         }
       }, 100);
+
+      // On first touch, force-play ALL mobile videos
+      document.addEventListener('touchstart', function forcePlayAll(){
+        document.querySelectorAll('.mobile-section video').forEach(function(v){
+          v.muted = true;
+          v.playsInline = true;
+          v.play().catch(function(){});
+        });
+        document.removeEventListener('touchstart', forcePlayAll);
+      }, {once:true});
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1515,6 +1523,8 @@
           var bg = document.createElement('div');
           bg.className = 'section-bg';
           bg.innerHTML = '<video muted loop playsinline poster="" data-lazy-src="' + f.bgSrc + '"><source type="video/mp4"></video>';
+          var bgVid = bg.querySelector('video');
+          if(bgVid){ bgVid.muted = true; bgVid.playsInline = true; }
           section.appendChild(bg);
         }
 
@@ -1666,6 +1676,8 @@
           var el = entry.target;
           var lazySrc = el.getAttribute('data-lazy-src');
           if(lazySrc){
+            el.muted = true;
+            el.playsInline = true;
             var source = el.querySelector('source');
             if(source){
               source.setAttribute('src', lazySrc);
@@ -1675,6 +1687,7 @@
               el.load();
             }
             el.removeAttribute('data-lazy-src');
+            el.addEventListener('loadeddata', function(){ el.play().catch(function(){}); });
             el.play().catch(function(){});
             videoObserver.unobserve(el);
           }
