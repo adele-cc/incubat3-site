@@ -1344,8 +1344,12 @@
         buildMobileNav();
         setupMobileAnimations();
       } catch(e) {
-        // If mobile build fails, show original content scaled down
+        // If mobile build fails, show error + original content
         console.error('Mobile layout error:', e);
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:20px;background:red;color:white;font-size:14px;z-index:99999;word-break:break-all';
+        errDiv.textContent = 'ERROR: ' + e.message + ' | STACK: ' + (e.stack || 'none');
+        document.body.appendChild(errDiv);
         Array.from(page.children).forEach(function(el){ el.classList.remove('desktop-only'); });
         page.style.width = '';
         page.style.height = '';
