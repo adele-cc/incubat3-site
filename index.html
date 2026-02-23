@@ -151,9 +151,9 @@
       .mobile-section--feature>*{position:relative;z-index:2}
       .mobile-section--feature .section-buttons{display:flex;flex-direction:column;gap:12px;margin-top:8px}
 
-      .mobile-section--arc{text-align:center;align-items:center;gap:40px;position:relative}
+      .mobile-section--arc{text-align:center;align-items:center;gap:24px;position:relative;padding-top:0}
       .mobile-section--arc .arc-fade-top{position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(180deg,#000,transparent);z-index:2;pointer-events:none}
-      .mobile-section--arc .arc-video{width:calc(100% + 40px);margin:-60px -20px 0;max-height:360px;object-fit:cover}
+      .mobile-section--arc .arc-video{width:calc(100% + 40px);margin:-80px -20px 0;max-height:360px;object-fit:cover}
       .mobile-section--arc .arc-card{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
       .mobile-section--arc .arc-card img{width:200px;height:200px;object-fit:contain}
 
@@ -1155,7 +1155,7 @@
        arc.mp4 orig top:6791 | "Powered by AI..." orig top:7739
        Three icons area: tops 8109-8696
        ========================================= */
-    var arcOffset = -250;
+    var arcOffset = -350;
     // ARC replaced video
     page.querySelectorAll('video').forEach(function(vid){
       var src = vid.querySelector('source');
@@ -1175,7 +1175,7 @@
     // "Powered by AI & Reputation Analysis" heading (7739) — less offset to add gap after arc video
     page.querySelectorAll('.HeroSubtitle').forEach(function(el){
       var t = parseFloat(el.style.top);
-      if(Math.abs(t - 7739) < 1) el.style.top = (t + arcOffset + 80) + 'px';
+      if(Math.abs(t - 7739) < 1) el.style.top = (t + arcOffset + 160) + 'px';
     });
     // Three-icon section: Evenly space the 3 columns
     // Col1=60, Col2=530, Col3=1000 (gap ~50px between each)
