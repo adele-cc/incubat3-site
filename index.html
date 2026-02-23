@@ -1494,7 +1494,7 @@
       var superapp = document.createElement('div');
       superapp.className = 'mobile-section mobile-section--superapp';
       superapp.id = 'mobile-incubat3';
-      superapp.innerHTML = '<div style="display:flex;align-items:center;gap:12px;justify-content:center"><svg width="52" height="46" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg><div class="m-title" style="font-size:48px">Incubat3</div></div>'
+      superapp.innerHTML = '<div style="display:flex;align-items:flex-end;gap:12px;justify-content:center"><svg width="52" height="46" viewBox="0 0 90 79" style="margin-bottom:6px" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg><div class="m-title" style="font-size:48px">Incubat3</div></div>'
         + '<div class="m-body" style="text-align:left">Incubat3 is the Web3 superapp for building, launching, and scaling token networks end-to-end.</div>'
         + '<div class="partner-logos">'
         + '<div class="logo-row"><img src="images/cc-full-logo-white_1_12.png" alt="CC"><img src="images/asset_1_4x_1_15.png" alt="Asset"><img src="images/inferno_4x_1_13.png" alt="Inferno"></div>'
@@ -1667,23 +1667,14 @@
       arcVid.playsInline = true;
       arcVid.setAttribute('playsinline', '');
       arcVid.setAttribute('webkit-playsinline', '');
-      arcVid.setAttribute('data-lazy-src', 'videos/arc.mp4');
+      arcVid.src = 'videos/arc.mp4';
+      arcVid.preload = 'auto';
       arc.appendChild(arcVid);
-      // Early-load arc: observe with large rootMargin so it loads well ahead of scroll
-      var arcObserver = new IntersectionObserver(function(entries){
-        if(!entries[0].isIntersecting) return;
-        arcVid.muted = true;
-        arcVid.src = 'videos/arc.mp4';
-        arcVid.removeAttribute('data-lazy-src');
-        arcVid.load();
-        mobileVideoQueue.push(arcVid);
-        arcVid.addEventListener('canplay', function(){
-          if(userInteracted) attemptPlay(arcVid);
-        });
+      mobileVideoQueue.push(arcVid);
+      arcVid.addEventListener('canplay', function(){
         if(userInteracted) attemptPlay(arcVid);
-        arcObserver.unobserve(arcVid);
-      }, {rootMargin:'600px'});
-      arcObserver.observe(arcVid);
+      });
+      if(userInteracted) attemptPlay(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
