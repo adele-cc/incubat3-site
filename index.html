@@ -27,9 +27,7 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
-    @media(max-width:768px){
-      .loader-mobile-logo{display:none}
-    }
+    .loader-mobile-logo{display:none}
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
     /* --- Site wrapper --- */
@@ -1667,14 +1665,23 @@
       arcVid.playsInline = true;
       arcVid.setAttribute('playsinline', '');
       arcVid.setAttribute('webkit-playsinline', '');
-      arcVid.preload = 'auto';
-      arcVid.src = 'videos/arc.mp4';
+      arcVid.setAttribute('data-lazy-src', 'videos/arc.mp4');
       arc.appendChild(arcVid);
-      // Register in mobile play queue immediately (no lazy-load delay)
-      mobileVideoQueue.push(arcVid);
-      arcVid.addEventListener('canplay', function(){
+      // Early-load arc: observe with large rootMargin so it loads well ahead of scroll
+      var arcObserver = new IntersectionObserver(function(entries){
+        if(!entries[0].isIntersecting) return;
+        arcVid.muted = true;
+        arcVid.src = 'videos/arc.mp4';
+        arcVid.removeAttribute('data-lazy-src');
+        arcVid.load();
+        mobileVideoQueue.push(arcVid);
+        arcVid.addEventListener('canplay', function(){
+          if(userInteracted) attemptPlay(arcVid);
+        });
         if(userInteracted) attemptPlay(arcVid);
-      });
+        arcObserver.unobserve(arcVid);
+      }, {rootMargin:'600px'});
+      arcObserver.observe(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
