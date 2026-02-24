@@ -1403,23 +1403,11 @@
       var hero = document.createElement('div');
       hero.className = 'mobile-section mobile-section--hero';
       hero.id = 'mobile-hero';
-      // Build hero bg with video created via JS (not innerHTML) for autoplay
+      // Create hero video via innerHTML so Safari HTML parser sets attributes natively
       var heroBg = document.createElement('div');
       heroBg.className = 'hero-bg';
-      var heroVideo = document.createElement('video');
-      heroVideo.autoplay = true;
-      heroVideo.muted = true;
-      heroVideo.defaultMuted = true;
-      heroVideo.loop = true;
-      heroVideo.playsInline = true;
-      heroVideo.setAttribute('autoplay', '');
-      heroVideo.setAttribute('muted', '');
-      heroVideo.setAttribute('playsinline', '');
-      heroVideo.setAttribute('webkit-playsinline', '');
-      heroVideo.poster = 'images/hero_18.png';
-      heroVideo.preload = 'auto';
-      heroVideo.src = 'assets/hero.mp4';
-      heroBg.appendChild(heroVideo);
+      heroBg.innerHTML = '<video autoplay muted loop playsinline webkit-playsinline preload="auto" poster="images/hero_18.png"><source src="assets/hero.mp4" type="video/mp4"></video>';
+      var heroVideo = heroBg.querySelector('video');
       hero.appendChild(heroBg);
 
       var heroGlow = document.createElement('div');
@@ -1514,8 +1502,8 @@
         }
       }
 
-      // User gesture: most reliable way to start videos on iOS.
-      // Reset retry counts so all videos get another chance.
+      // User gesture: GUARANTEED to work on iOS since play() inside
+      // a touch/click handler is always allowed. This is the nuclear fallback.
       function onUserGesture(){
         for(var i = 0; i < mobileVideoQueue.length; i++){
           var v = mobileVideoQueue[i];
@@ -1523,11 +1511,16 @@
           v._playRetries = 0;
           v._playPending = false;
           v._gestureRetry = true;
+          v.muted = true;
           if(v.paused){
-            v.muted = true;
-            // Kick-start loading if no data yet
-            if(v.readyState === 0 && v.src) v.load();
-            attemptPlay(v);
+            // Force load + play inside gesture handler
+            if(!v.src && v.querySelector('source')){
+              // Video uses <source> element
+              v.load();
+            } else if(v.readyState === 0 && v.src){
+              v.load();
+            }
+            try{ var p = v.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){}
           }
         }
       }
@@ -1650,19 +1643,8 @@
         if(f.bgType === 'video'){
           var bg = document.createElement('div');
           bg.className = 'section-bg';
-          var bgVid = document.createElement('video');
-          bgVid.autoplay = true;
-          bgVid.muted = true;
-          bgVid.defaultMuted = true;
-          bgVid.loop = true;
-          bgVid.playsInline = true;
-          bgVid.setAttribute('autoplay', '');
-          bgVid.setAttribute('muted', '');
-          bgVid.setAttribute('playsinline', '');
-          bgVid.setAttribute('webkit-playsinline', '');
-          bgVid.preload = 'none';
-          bgVid.setAttribute('data-lazy-src', f.bgSrc);
-          bg.appendChild(bgVid);
+          bg.innerHTML = '<video autoplay muted loop playsinline webkit-playsinline preload="none" data-lazy-src="' + f.bgSrc + '"></video>';
+          var bgVid = bg.querySelector('video');
           section.appendChild(bg);
         }
 
@@ -1736,19 +1718,9 @@
       arcFade.className = 'arc-fade-top';
       arc.appendChild(arcFade);
 
-      var arcVid = document.createElement('video');
-      arcVid.className = 'arc-video';
-      arcVid.autoplay = true;
-      arcVid.muted = true;
-      arcVid.defaultMuted = true;
-      arcVid.loop = true;
-      arcVid.playsInline = true;
-      arcVid.setAttribute('autoplay', '');
-      arcVid.setAttribute('muted', '');
-      arcVid.setAttribute('playsinline', '');
-      arcVid.setAttribute('webkit-playsinline', '');
-      arcVid.src = 'videos/arc.mp4';
-      arcVid.preload = 'auto';
+      var arcWrap = document.createElement('div');
+      arcWrap.innerHTML = '<video class="arc-video" autoplay muted loop playsinline webkit-playsinline preload="auto"><source src="videos/arc.mp4" type="video/mp4"></video>';
+      var arcVid = arcWrap.querySelector('video');
       arc.appendChild(arcVid);
       registerVideo(arcVid);
 
@@ -1816,18 +1788,8 @@
       // Prepend footer bg video (created via JS for autoplay compatibility)
       var footerBg = document.createElement('div');
       footerBg.className = 'footer-bg';
-      var footerVid = document.createElement('video');
-      footerVid.autoplay = true;
-      footerVid.muted = true;
-      footerVid.defaultMuted = true;
-      footerVid.loop = true;
-      footerVid.playsInline = true;
-      footerVid.setAttribute('autoplay', '');
-      footerVid.setAttribute('muted', '');
-      footerVid.setAttribute('playsinline', '');
-      footerVid.setAttribute('webkit-playsinline', '');
-      footerVid.setAttribute('data-lazy-src', 'videos/footer.mp4');
-      footerBg.appendChild(footerVid);
+      footerBg.innerHTML = '<video autoplay muted loop playsinline webkit-playsinline data-lazy-src="videos/footer.mp4"></video>';
+      var footerVid = footerBg.querySelector('video');
       footer.insertBefore(footerBg, footer.firstChild);
 
       page.appendChild(footer);
