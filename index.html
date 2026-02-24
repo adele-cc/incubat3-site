@@ -698,38 +698,22 @@
       shown = true;
       loader.classList.add('loader--done');
       site.classList.add('site-wrap--visible');
-      if(lv){ try{ lv.pause(); }catch(e){} }
     }
 
     if(window.innerWidth <= 768){
       // Mobile: use portrait loader video
       lv.src = 'I3_Loader_Mobile.mp4';
       lv.muted = true;
-      lv.defaultMuted = true;
       lv.playsInline = true;
-      lv.setAttribute('muted', '');
       lv.setAttribute('playsinline', '');
+      lv.setAttribute('webkit-playsinline', '');
       lv.load();
-      // Try autoplay; if blocked, wait for tap on loader screen
-      lv.addEventListener('canplay', function(){
-        var p = lv.play();
-        if(p && p.catch) p.catch(function(){});
-      });
-      lv.play().catch(function(){
-        // Autoplay blocked — tap loader to play, or skip after 3s
-        loader.addEventListener('touchstart', function(){
-          lv.play().then(function(){}).catch(function(){ showSite(); });
-        }, {once:true});
-        setTimeout(showSite, 3000);
-      });
+      lv.play().catch(function(){ showSite(); });
       lv.addEventListener('ended', showSite);
       setTimeout(showSite, 10000);
     } else {
       lv.muted = true;
-      lv.defaultMuted = true;
       lv.playsInline = true;
-      lv.setAttribute('muted', '');
-      lv.setAttribute('playsinline', '');
       lv.play().catch(function(){ showSite(); });
       lv.addEventListener('ended', showSite);
       setTimeout(showSite, 10000);
@@ -742,12 +726,8 @@
       var vid = document.createElement('video');
       vid.autoplay = true;
       vid.muted = true;
-      vid.defaultMuted = true;
       vid.loop = true;
       vid.playsInline = true;
-      vid.setAttribute('autoplay', '');
-      vid.setAttribute('muted', '');
-      vid.setAttribute('playsinline', '');
       vid.style.cssText = img.style.cssText;
       vid.className = img.className;
       vid.setAttribute('data-layer', img.getAttribute('data-layer') || '');
@@ -1414,8 +1394,17 @@
       hero.id = 'mobile-hero';
       var heroBg = document.createElement('div');
       heroBg.className = 'hero-bg';
-      heroBg.innerHTML = '<video autoplay muted loop playsinline preload="auto" poster="images/hero_18.png" src="assets/hero.mp4"></video>';
-      var heroVideo = heroBg.querySelector('video');
+      var heroVideo = document.createElement('video');
+      heroVideo.autoplay = true;
+      heroVideo.muted = true;
+      heroVideo.loop = true;
+      heroVideo.playsInline = true;
+      heroVideo.setAttribute('playsinline', '');
+      heroVideo.setAttribute('webkit-playsinline', '');
+      heroVideo.poster = 'images/hero_18.png';
+      heroVideo.preload = 'auto';
+      heroVideo.src = 'assets/hero.mp4';
+      heroBg.appendChild(heroVideo);
       hero.appendChild(heroBg);
 
       var heroGlow = document.createElement('div');
@@ -1449,46 +1438,56 @@
       hero.style.minHeight = window.innerHeight + 'px';
 
       /* =========================================
-         MOBILE VIDEO PLAY SYSTEM — kept simple
+         MOBILE VIDEO PLAY SYSTEM
+         Browsers block autoplay even for muted+playsinline.
+         Solution: play videos on user gesture (touch/click),
+         and re-try as lazy-loaded videos become ready.
          ========================================= */
-      var allVids = [];
+      var userInteracted = false;
+      var mobileVideoQueue = [];
 
-      function tryPlay(v){
-        if(!v||!v.paused) return;
-        v.muted=true;
-        try{var p=v.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+      function attemptPlay(vid){
+        if(!vid || !vid.paused) return;
+        vid.muted = true;
+        try{ var p = vid.play(); if(p && p.catch) p.catch(function(){}); } catch(e){}
       }
 
-      function playAll(){
-        for(var i=0;i<allVids.length;i++) tryPlay(allVids[i]);
-      }
-
-      function reg(v){
-        allVids.push(v);
-        v.addEventListener('canplay',function(){tryPlay(v);});
-      }
-
-      // On ANY touch/click: force-play everything
-      document.addEventListener('touchstart',playAll,{passive:true,capture:true});
-      document.addEventListener('click',playAll,{passive:true,capture:true});
-
-      // After loader finishes
-      var _si=setInterval(function(){
-        var s=document.getElementById('site');
-        if(s&&s.classList.contains('site-wrap--visible')){
-          clearInterval(_si);
-          playAll();
-          setTimeout(playAll,500);
-          setTimeout(playAll,2000);
+      function playAllReady(){
+        for(var i = 0; i < mobileVideoQueue.length; i++){
+          var v = mobileVideoQueue[i];
+          if(v && v.readyState >= 2 && v.paused) attemptPlay(v);
         }
-      },200);
+      }
 
-      // Tab switch
-      document.addEventListener('visibilitychange',function(){
-        if(!document.hidden)playAll();
+      function onUserGesture(){
+        if(!userInteracted){
+          userInteracted = true;
+          // First gesture: immediately try hero video
+          attemptPlay(heroVideo);
+        }
+        playAllReady();
+      }
+
+      // Listen on multiple events with capture for maximum reliability
+      ['touchstart','touchend','click'].forEach(function(evt){
+        document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
       });
 
-      reg(heroVideo);
+      // Throttled scroll: retry paused videos after user has interacted
+      var scrollPlayTimer;
+      window.addEventListener('scroll', function(){
+        if(!userInteracted) return;
+        clearTimeout(scrollPlayTimer);
+        scrollPlayTimer = setTimeout(playAllReady, 200);
+      }, {passive:true});
+
+      // Register hero video
+      mobileVideoQueue.push(heroVideo);
+      heroVideo.addEventListener('canplay', function(){
+        if(userInteracted) attemptPlay(heroVideo);
+      });
+      // Attempt immediate play (works on some devices)
+      attemptPlay(heroVideo);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1578,8 +1577,15 @@
         if(f.bgType === 'video'){
           var bg = document.createElement('div');
           bg.className = 'section-bg';
-          bg.innerHTML = '<video autoplay muted loop playsinline preload="none" data-lazy-src="' + f.bgSrc + '"></video>';
-          var bgVid = bg.querySelector('video');
+          var bgVid = document.createElement('video');
+          bgVid.muted = true;
+          bgVid.loop = true;
+          bgVid.playsInline = true;
+          bgVid.setAttribute('playsinline', '');
+          bgVid.setAttribute('webkit-playsinline', '');
+          bgVid.preload = 'none';
+          bgVid.setAttribute('data-lazy-src', f.bgSrc);
+          bg.appendChild(bgVid);
           section.appendChild(bg);
         }
 
@@ -1653,11 +1659,23 @@
       arcFade.className = 'arc-fade-top';
       arc.appendChild(arcFade);
 
-      var arcWrap = document.createElement('div');
-      arcWrap.innerHTML = '<video class="arc-video" autoplay muted loop playsinline preload="auto" src="videos/arc.mp4"></video>';
-      var arcVid = arcWrap.querySelector('video');
+      var arcVid = document.createElement('video');
+      arcVid.className = 'arc-video';
+      arcVid.autoplay = true;
+      arcVid.muted = true;
+      arcVid.loop = true;
+      arcVid.playsInline = true;
+      arcVid.setAttribute('playsinline', '');
+      arcVid.setAttribute('webkit-playsinline', '');
+      arcVid.setAttribute('autoplay', '');
+      arcVid.src = 'videos/arc.mp4';
+      arcVid.preload = 'auto';
       arc.appendChild(arcVid);
-      reg(arcVid);
+      mobileVideoQueue.push(arcVid);
+      arcVid.addEventListener('canplay', function(){
+        if(userInteracted) attemptPlay(arcVid);
+      });
+      attemptPlay(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
@@ -1723,27 +1741,40 @@
       // Prepend footer bg video (created via JS for autoplay compatibility)
       var footerBg = document.createElement('div');
       footerBg.className = 'footer-bg';
-      footerBg.innerHTML = '<video autoplay muted loop playsinline data-lazy-src="videos/footer.mp4"></video>';
-      var footerVid = footerBg.querySelector('video');
+      var footerVid = document.createElement('video');
+      footerVid.muted = true;
+      footerVid.loop = true;
+      footerVid.playsInline = true;
+      footerVid.setAttribute('playsinline', '');
+      footerVid.setAttribute('data-lazy-src', 'videos/footer.mp4');
+      footerBg.appendChild(footerVid);
       footer.insertBefore(footerBg, footer.firstChild);
 
       page.appendChild(footer);
 
-      // === LAZY-LOAD VIDEOS (load ahead of scroll, auto-play) ===
+      // === LAZY-LOAD VIDEOS (integrated with mobile play system) ===
       var videoObserver = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
           if(!entry.isIntersecting) return;
           var el = entry.target;
           var lazySrc = el.getAttribute('data-lazy-src');
           if(lazySrc){
+            el.muted = true;
+            el.playsInline = true;
+            el.setAttribute('playsinline', '');
+            el.setAttribute('webkit-playsinline', '');
             el.src = lazySrc;
             el.removeAttribute('data-lazy-src');
             el.load();
-            reg(el);
+            // Register in mobile play queue
+            mobileVideoQueue.push(el);
+            el.addEventListener('canplay', function(){
+              if(userInteracted) attemptPlay(el);
+            });
             videoObserver.unobserve(el);
           }
         });
-      }, { rootMargin: '600px' });
+      }, { rootMargin: '200px' });
 
       document.querySelectorAll('[data-lazy-src]').forEach(function(el){
         videoObserver.observe(el);
