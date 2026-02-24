@@ -26,7 +26,16 @@
 
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
-    .loader video{width:100%;height:100%;object-fit:cover}
+    .loader video{width:100%;height:100%;object-fit:cover;-webkit-media-controls-play-button{display:none}}
+    video::-webkit-media-controls{display:none!important}
+    video::-webkit-media-controls-play-button{display:none!important}
+    video::-webkit-media-controls-start-playback-button{display:none!important}
+    .loader .loader-desktop{display:block}
+    .loader .loader-mobile{display:none}
+    @media(max-width:768px){
+      .loader .loader-desktop{display:none}
+      .loader .loader-mobile{display:block}
+    }
     .loader-mobile-logo{display:none}
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
@@ -208,9 +217,8 @@
 <body>
   <!-- LOADER -->
   <div id="loader" class="loader">
-    <video id="loader-video" autoplay muted playsinline preload="auto">
-      <source src="Loader.mp4" type="video/mp4">
-    </video>
+    <video id="loader-video" class="loader-desktop" autoplay muted playsinline preload="auto" src="Loader.mp4"></video>
+    <video id="loader-video-mobile" class="loader-mobile" autoplay muted playsinline webkit-playsinline preload="auto" src="I3_Loader_Mobile.mp4"></video>
     <svg class="loader-mobile-logo" width="80" height="70" viewBox="0 0 90 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M83.4648 39.9858L89.9028 53.141L89.8236 75.2975L86.4665 78.7246C86.4665 78.7246 34.6142 78.7807 8.68807 78.8241C6.54801 78.8266 2.27045 79.0026 2.27045 79.0026L0 76.8045C0 76.8045 0.0971591 63.861 0.107386 57.3892C0.12017 48.8622 0.0690341 31.8081 0.0690341 31.8081L2.85852 28.8654L24.4253 28.8119L27.0767 31.4026L26.9616 53.7861L29.8662 56.8103L60.6043 56.5401L62.8977 53.7912L60.5301 51.1112L36.9051 50.9404L33.8881 47.8957L33.6835 31.9152L36.6827 28.8144L59.85 28.6742L62.8108 25.6755L59.7324 22.6053L35.642 22.6002L32.983 20.012L32.9446 2.425L35.3122 0.053549L87.6222 0L89.9974 2.323L89.9054 29.0465L83.4648 39.9858Z" fill="white"/><path d="M13.5588 22.3044C9.73892 22.3044 2.10426 22.3223 2.10426 22.3223L0.0485795 20.3512L0 2.10371L1.9304 0.0280494L25.2997 0L27.1074 1.94306L27.0767 20.42L25.0133 22.3554C25.0133 22.3554 17.3761 22.335 13.5562 22.335V22.3044H13.5588Z" fill="white"/></svg>
   </div>
 
@@ -688,7 +696,9 @@
     /* =========================================
        LOADER
        ========================================= */
-    var lv = document.getElementById('loader-video');
+    var isMobileView = window.innerWidth <= 768;
+    // Pick the right loader video — each already has the correct src in HTML
+    var lv = document.getElementById(isMobileView ? 'loader-video-mobile' : 'loader-video');
     var loader = document.getElementById('loader');
     var site = document.getElementById('site');
     var shown = false;
@@ -711,43 +721,17 @@
       v.setAttribute('webkit-playsinline', '');
     }
 
-    /* Helper: try to play, returns promise */
-    function safePlay(v){
-      if(!v || !v.paused) return;
-      v.muted = true;
-      try{ var p = v.play(); if(p && p.catch) p.catch(function(){}); return p; } catch(e){}
-    }
-
-    if(window.innerWidth <= 768){
-      // Mobile: use portrait loader video
-      lv.src = 'I3_Loader_Mobile.mp4';
-      primeVideo(lv);
-      lv.load();
-      var loaderPlayed = false;
-      function tryLoaderPlay(){
-        if(loaderPlayed || shown) return;
-        var p = lv.play();
-        if(p && p.then) p.then(function(){ loaderPlayed = true; }).catch(function(){});
-      }
-      tryLoaderPlay();
-      lv.addEventListener('canplay', tryLoaderPlay);
-      // On any touch on the loader screen, start the video
-      loader.addEventListener('touchstart', function(){
-        if(!loaderPlayed && !shown){ tryLoaderPlay(); }
-      }, {passive:true});
-      loader.addEventListener('click', function(){
-        if(!loaderPlayed && !shown){ tryLoaderPlay(); }
-      });
-      lv.addEventListener('ended', showSite);
-      // If loader doesn't play within 4s, skip to site
-      setTimeout(function(){ if(!loaderPlayed) showSite(); }, 4000);
-      setTimeout(showSite, 10000);
-    } else {
-      primeVideo(lv);
-      lv.play().catch(function(){ showSite(); });
-      lv.addEventListener('ended', showSite);
-      setTimeout(showSite, 10000);
-    }
+    // Loader: src already in HTML, no JS changes — just listen for end
+    lv.addEventListener('ended', showSite);
+    // Fallback: if autoplay is blocked, tap anywhere on loader to play
+    loader.addEventListener('touchstart', function(){ lv.play().catch(function(){}); }, {passive:true});
+    loader.addEventListener('click', function(){ lv.play().catch(function(){}); });
+    // Safety timeout: skip loader after 10s no matter what
+    setTimeout(showSite, 10000);
+    // If video never starts (autoplay blocked + no tap), skip after 4s
+    setTimeout(function(){
+      if(lv.paused && !lv.ended) showSite();
+    }, 4000);
 
     /* =========================================
        HELPER: replace an <img> with a <video>
@@ -1470,7 +1454,6 @@
          canplay events, periodic retry, scroll retry.
          ========================================= */
       var mobileVids = [];
-      var gestured = false;
 
       function attemptPlay(vid){
         if(!vid || !vid.paused) return;
@@ -1478,10 +1461,9 @@
         try{ var p = vid.play(); if(p && p.catch) p.catch(function(){}); } catch(e){}
       }
 
-      function playAllVisible(){
+      function playAll(){
         for(var i = 0; i < mobileVids.length; i++){
-          var v = mobileVids[i];
-          if(v && v.paused && v.readyState >= 1) attemptPlay(v);
+          attemptPlay(mobileVids[i]);
         }
       }
 
@@ -1491,48 +1473,33 @@
         attemptPlay(v);
       }
 
-      // Capture first user gesture — force-play everything
-      function onGesture(){
-        gestured = true;
-        playAllVisible();
-      }
+      // On ANY user interaction: force-play every registered video
       ['touchstart','touchend','click','scroll'].forEach(function(evt){
-        document.addEventListener(evt, onGesture, {passive:true, capture:true});
+        document.addEventListener(evt, playAll, {passive:true, capture:true});
       });
 
-      // Periodic retry: try every 2s for the first 20s after site is visible
+      // Periodic retry: every 2s for 30s
       var retryCount = 0;
       var retryTimer = setInterval(function(){
-        playAllVisible();
-        retryCount++;
-        if(retryCount > 10) clearInterval(retryTimer);
+        playAll();
+        if(++retryCount > 15) clearInterval(retryTimer);
       }, 2000);
 
       // Tab switch: resume videos
       document.addEventListener('visibilitychange', function(){
-        if(!document.hidden) playAllVisible();
+        if(!document.hidden) playAll();
       });
 
-      // IntersectionObserver: play when visible, pause when off-screen
-      var playObserver = null;
-      if(window.IntersectionObserver){
-        playObserver = new IntersectionObserver(function(entries){
-          entries.forEach(function(entry){
-            var v = entry.target;
-            if(entry.isIntersecting){
-              attemptPlay(v);
-            }
-          });
-        }, { threshold: 0.1 });
-      }
-
-      function trackVisibility(v){
-        if(playObserver) playObserver.observe(v);
-      }
+      // IntersectionObserver: play when visible
+      var playObserver = (window.IntersectionObserver) ? new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting) attemptPlay(entry.target);
+        });
+      }, { threshold: 0.1 }) : null;
 
       // Register hero video
       registerVid(heroVideo);
-      trackVisibility(heroVideo);
+      if(playObserver) playObserver.observe(heroVideo);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1710,7 +1677,7 @@
       arcVid.preload = 'auto';
       arc.appendChild(arcVid);
       registerVid(arcVid);
-      trackVisibility(arcVid);
+      if(playObserver) playObserver.observe(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
@@ -1797,7 +1764,7 @@
             el.removeAttribute('data-lazy-src');
             el.load();
             registerVid(el);
-            trackVisibility(el);
+            if(playObserver) playObserver.observe(el);
             videoObserver.unobserve(el);
           }
         });
