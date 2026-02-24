@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoplay Test</title>
+<style>
+body{margin:0;background:#000;color:#fff;font-family:sans-serif;padding:20px}
+video{width:100%;max-width:400px;display:block;margin:20px 0}
+.status{padding:10px;margin:5px 0;border-radius:4px;font-size:14px}
+.pass{background:#1a3a1a}.fail{background:#3a1a1a}
+</style>
+</head>
+<body>
+<h2>Video Autoplay Test</h2>
+<p>Testing if your browser allows muted video autoplay.</p>
+
+<h3>Test 1: Pure HTML autoplay (no JavaScript)</h3>
+<video id="v1" autoplay muted playsinline webkit-playsinline preload="auto" src="I3_Loader_Mobile.mp4"></video>
+<div id="s1" class="status">Checking...</div>
+
+<h3>Test 2: JavaScript play() call</h3>
+<video id="v2" muted playsinline webkit-playsinline preload="auto" src="I3_Loader_Mobile.mp4"></video>
+<div id="s2" class="status">Checking...</div>
+
+<h3>Test 3: createElement + play()</h3>
+<div id="container3"></div>
+<div id="s3" class="status">Checking...</div>
+
+<div id="info" style="margin-top:30px;font-size:12px;color:#888"></div>
+
+<script>
+var info = document.getElementById('info');
+info.innerHTML = 'Screen: ' + window.innerWidth + 'x' + window.innerHeight
+  + '<br>UserAgent: ' + navigator.userAgent
+  + '<br>Time: ' + new Date().toISOString();
+
+// Test 1: check if HTML autoplay worked
+var v1 = document.getElementById('v1');
+var s1 = document.getElementById('s1');
+setTimeout(function(){
+  if(!v1.paused){
+    s1.textContent = 'PASS - HTML autoplay works!';
+    s1.className = 'status pass';
+  } else {
+    s1.textContent = 'FAIL - HTML autoplay blocked. readyState=' + v1.readyState;
+    s1.className = 'status fail';
+  }
+}, 2000);
+
+// Test 2: JS play() without user gesture
+var v2 = document.getElementById('v2');
+var s2 = document.getElementById('s2');
+v2.muted = true;
+v2.playsInline = true;
+var p2 = v2.play();
+if(p2 && p2.then){
+  p2.then(function(){
+    s2.textContent = 'PASS - JS play() works!';
+    s2.className = 'status pass';
+  }).catch(function(e){
+    s2.textContent = 'FAIL - JS play() blocked: ' + e.name + ' - ' + e.message;
+    s2.className = 'status fail';
+  });
+}
+
+// Test 3: createElement
+var v3 = document.createElement('video');
+v3.muted = true;
+v3.defaultMuted = true;
+v3.playsInline = true;
+v3.setAttribute('muted', '');
+v3.setAttribute('autoplay', '');
+v3.setAttribute('playsinline', '');
+v3.preload = 'auto';
+v3.src = 'I3_Loader_Mobile.mp4';
+v3.style.cssText = 'width:100%;max-width:400px';
+document.getElementById('container3').appendChild(v3);
+var s3 = document.getElementById('s3');
+var p3 = v3.play();
+if(p3 && p3.then){
+  p3.then(function(){
+    s3.textContent = 'PASS - createElement + play() works!';
+    s3.className = 'status pass';
+  }).catch(function(e){
+    s3.textContent = 'FAIL - createElement + play() blocked: ' + e.name + ' - ' + e.message;
+    s3.className = 'status fail';
+  });
+}
+</script>
+</body>
+</html>
