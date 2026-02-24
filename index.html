@@ -1439,19 +1439,21 @@
       hero.style.minHeight = window.innerHeight + 'px';
 
       /* =========================================
-         MOBILE VIDEO PLAY SYSTEM (bulletproof)
-         Modern mobile browsers allow muted+playsinline autoplay.
-         This system ensures all videos play reliably via:
-         1. Immediate play() attempts (no user-gate)
-         2. canplay/loadeddata listeners for retry
-         3. Periodic polling every 1s to catch stragglers
-         4. User gesture handlers as fallback
-         5. Visibility change handler to resume after backgrounding
+         MOBILE VIDEO PLAY SYSTEM
+         Key rules for reliable mobile autoplay:
+         1. NEVER call play() unless readyState >= 2 (has data)
+            Calling play() on empty videos causes rejected promises
+            which can make Safari permanently block autoplay.
+         2. Rely on the autoplay HTML attribute for initial playback.
+         3. Use canplay/loadedmetadata events to retry — not polling.
+         4. On user gesture, force-load and play any stuck videos.
+         5. Resume on visibility change (tab switch).
          ========================================= */
       var mobileVideoQueue = [];
 
       function attemptPlay(vid){
         if(!vid || !vid.paused) return;
+        if(vid.readyState < 2) return; // no data yet — wait for event
         vid.muted = true;
         try{
           var p = vid.play();
@@ -1459,31 +1461,54 @@
         } catch(e){}
       }
 
-      function playAllReady(){
-        for(var i = 0; i < mobileVideoQueue.length; i++){
-          var v = mobileVideoQueue[i];
-          if(v && v.paused) attemptPlay(v);
-        }
-      }
-
       function registerVideo(vid){
         mobileVideoQueue.push(vid);
         vid.addEventListener('canplay', function(){ attemptPlay(vid); });
-        vid.addEventListener('loadeddata', function(){ attemptPlay(vid); });
-        attemptPlay(vid);
+        vid.addEventListener('loadedmetadata', function(){
+          // loadedmetadata fires before canplay; start loading rest of data
+          if(vid.readyState < 2) vid.load();
+        });
+        vid.addEventListener('playing', function(){
+          // Once confirmed playing, mark so we don't re-trigger
+          vid._isPlaying = true;
+        });
+        vid.addEventListener('pause', function(){
+          vid._isPlaying = false;
+        });
+        // Only attempt if already has data (e.g. from cache)
+        if(vid.readyState >= 2) attemptPlay(vid);
       }
 
-      // User gesture: fallback for strict browsers
-      ['touchstart','touchend','click','scroll'].forEach(function(evt){
-        document.addEventListener(evt, playAllReady, {passive:true, capture:true});
+      // User gesture: most reliable way to start videos on iOS.
+      // On first touch, force-load any video that hasn't loaded,
+      // and play any that are ready.
+      function onUserGesture(){
+        for(var i = 0; i < mobileVideoQueue.length; i++){
+          var v = mobileVideoQueue[i];
+          if(!v) continue;
+          if(v.paused){
+            v.muted = true;
+            if(v.readyState < 2 && v.src){
+              // Video has a src but no data — kick-start loading
+              v.load();
+            }
+            attemptPlay(v);
+          }
+        }
+      }
+      ['touchstart','touchend','click'].forEach(function(evt){
+        document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
       });
-
-      // Periodic polling: catch any video that slipped through
-      setInterval(playAllReady, 1000);
 
       // Resume videos when returning to tab
       document.addEventListener('visibilitychange', function(){
-        if(!document.hidden) playAllReady();
+        if(!document.hidden){
+          setTimeout(function(){
+            for(var i = 0; i < mobileVideoQueue.length; i++){
+              attemptPlay(mobileVideoQueue[i]);
+            }
+          }, 300);
+        }
       });
 
       // Register hero video
