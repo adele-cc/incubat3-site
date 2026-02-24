@@ -1403,10 +1403,9 @@
       var hero = document.createElement('div');
       hero.className = 'mobile-section mobile-section--hero';
       hero.id = 'mobile-hero';
-      // Create hero video via innerHTML so Safari HTML parser sets attributes natively
       var heroBg = document.createElement('div');
       heroBg.className = 'hero-bg';
-      heroBg.innerHTML = '<video autoplay muted loop playsinline webkit-playsinline preload="auto" poster="images/hero_18.png"><source src="assets/hero.mp4" type="video/mp4"></video>';
+      heroBg.innerHTML = '<video autoplay muted loop playsinline preload="auto" poster="images/hero_18.png" src="assets/hero.mp4"></video>';
       var heroVideo = heroBg.querySelector('video');
       hero.appendChild(heroBg);
 
@@ -1441,119 +1440,46 @@
       hero.style.minHeight = window.innerHeight + 'px';
 
       /* =========================================
-         MOBILE VIDEO PLAY SYSTEM
-         Why videos fail intermittently on iOS:
-         - play() on a video with no data rejects and counts against
-           Safari's autoplay budget
-         - The loader video can consume the autoplay slot
-         - Videos hidden behind the loader miss their autoplay window
-         - Once play() rejects ~3 times, Safari blocks further autoplay
-
-         Solution:
-         1. Track pending play() promises — never stack calls
-         2. Max 3 auto-retries per video, then wait for user gesture
-         3. canplay/loadeddata events trigger play (not polling)
-         4. User gesture resets retry count and force-plays everything
-         5. After loader finishes, trigger playback of all ready videos
-         6. Visibility change resumes paused videos
+         MOBILE VIDEO PLAY SYSTEM — kept simple
          ========================================= */
-      var mobileVideoQueue = [];
+      var allVids = [];
 
-      function attemptPlay(vid){
-        if(!vid || !vid.paused || vid._playPending) return;
-        vid.muted = true;
-        vid.defaultMuted = true;
-        if(!vid.hasAttribute('muted')) vid.setAttribute('muted', '');
-        vid._playRetries = vid._playRetries || 0;
-        if(vid._playRetries > 3 && !vid._gestureRetry) return;
-        vid._gestureRetry = false;
-        vid._playPending = true;
-        try{
-          var p = vid.play();
-          if(p && p.then){
-            p.then(function(){
-              vid._playPending = false;
-              vid._playRetries = 0;
-            }).catch(function(){
-              vid._playPending = false;
-              vid._playRetries++;
-            });
-          } else {
-            vid._playPending = false;
-          }
-        } catch(e){
-          vid._playPending = false;
+      function tryPlay(v){
+        if(!v||!v.paused) return;
+        v.muted=true;
+        try{var p=v.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+      }
+
+      function playAll(){
+        for(var i=0;i<allVids.length;i++) tryPlay(allVids[i]);
+      }
+
+      function reg(v){
+        allVids.push(v);
+        v.addEventListener('canplay',function(){tryPlay(v);});
+      }
+
+      // On ANY touch/click: force-play everything
+      document.addEventListener('touchstart',playAll,{passive:true,capture:true});
+      document.addEventListener('click',playAll,{passive:true,capture:true});
+
+      // After loader finishes
+      var _si=setInterval(function(){
+        var s=document.getElementById('site');
+        if(s&&s.classList.contains('site-wrap--visible')){
+          clearInterval(_si);
+          playAll();
+          setTimeout(playAll,500);
+          setTimeout(playAll,2000);
         }
-      }
+      },200);
 
-      function registerVideo(vid){
-        mobileVideoQueue.push(vid);
-        vid.addEventListener('canplay', function(){ attemptPlay(vid); });
-        vid.addEventListener('loadeddata', function(){ attemptPlay(vid); });
-        vid.addEventListener('loadedmetadata', function(){ attemptPlay(vid); });
-        // If already has data (cached), try immediately
-        if(vid.readyState >= 1) attemptPlay(vid);
-      }
-
-      function playAllReady(){
-        for(var i = 0; i < mobileVideoQueue.length; i++){
-          var v = mobileVideoQueue[i];
-          if(v && v.paused) attemptPlay(v);
-        }
-      }
-
-      // User gesture: GUARANTEED to work on iOS since play() inside
-      // a touch/click handler is always allowed. This is the nuclear fallback.
-      function onUserGesture(){
-        for(var i = 0; i < mobileVideoQueue.length; i++){
-          var v = mobileVideoQueue[i];
-          if(!v) continue;
-          v._playRetries = 0;
-          v._playPending = false;
-          v._gestureRetry = true;
-          v.muted = true;
-          if(v.paused){
-            // Force load + play inside gesture handler
-            if(!v.src && v.querySelector('source')){
-              // Video uses <source> element
-              v.load();
-            } else if(v.readyState === 0 && v.src){
-              v.load();
-            }
-            try{ var p = v.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){}
-          }
-        }
-      }
-      ['touchstart','touchend','click'].forEach(function(evt){
-        document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
+      // Tab switch
+      document.addEventListener('visibilitychange',function(){
+        if(!document.hidden)playAll();
       });
 
-      // After loader finishes (site becomes visible), trigger playback.
-      // The loader may have consumed the autoplay slot, so this retry
-      // catches videos that missed their window.
-      var siteEl = document.getElementById('site');
-      if(siteEl){
-        new MutationObserver(function(mutations, obs){
-          if(siteEl.classList.contains('site-wrap--visible')){
-            setTimeout(playAllReady, 300);
-            setTimeout(playAllReady, 1000);
-            setTimeout(playAllReady, 3000);
-            obs.disconnect();
-          }
-        }).observe(siteEl, {attributes:true, attributeFilter:['class']});
-        // In case loader already finished
-        if(siteEl.classList.contains('site-wrap--visible')){
-          setTimeout(playAllReady, 300);
-        }
-      }
-
-      // Resume videos when returning to tab
-      document.addEventListener('visibilitychange', function(){
-        if(!document.hidden) setTimeout(playAllReady, 300);
-      });
-
-      // Register hero video
-      registerVideo(heroVideo);
+      reg(heroVideo);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1643,7 +1569,7 @@
         if(f.bgType === 'video'){
           var bg = document.createElement('div');
           bg.className = 'section-bg';
-          bg.innerHTML = '<video autoplay muted loop playsinline webkit-playsinline preload="none" data-lazy-src="' + f.bgSrc + '"></video>';
+          bg.innerHTML = '<video autoplay muted loop playsinline preload="none" data-lazy-src="' + f.bgSrc + '"></video>';
           var bgVid = bg.querySelector('video');
           section.appendChild(bg);
         }
@@ -1719,10 +1645,10 @@
       arc.appendChild(arcFade);
 
       var arcWrap = document.createElement('div');
-      arcWrap.innerHTML = '<video class="arc-video" autoplay muted loop playsinline webkit-playsinline preload="auto"><source src="videos/arc.mp4" type="video/mp4"></video>';
+      arcWrap.innerHTML = '<video class="arc-video" autoplay muted loop playsinline preload="auto" src="videos/arc.mp4"></video>';
       var arcVid = arcWrap.querySelector('video');
       arc.appendChild(arcVid);
-      registerVideo(arcVid);
+      reg(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
@@ -1788,7 +1714,7 @@
       // Prepend footer bg video (created via JS for autoplay compatibility)
       var footerBg = document.createElement('div');
       footerBg.className = 'footer-bg';
-      footerBg.innerHTML = '<video autoplay muted loop playsinline webkit-playsinline data-lazy-src="videos/footer.mp4"></video>';
+      footerBg.innerHTML = '<video autoplay muted loop playsinline data-lazy-src="videos/footer.mp4"></video>';
       var footerVid = footerBg.querySelector('video');
       footer.insertBefore(footerBg, footer.firstChild);
 
@@ -1804,7 +1730,7 @@
             el.src = lazySrc;
             el.removeAttribute('data-lazy-src');
             el.load();
-            registerVideo(el);
+            reg(el);
             videoObserver.unobserve(el);
           }
         });
