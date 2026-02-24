@@ -27,6 +27,8 @@
     /* --- Loader --- */
     .loader{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
     .loader video{width:100%;height:100%;object-fit:cover}
+    video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
+    video::-webkit-media-controls{display:none!important}
     .loader-mobile-logo{display:none}
     .loader--done{opacity:0;visibility:hidden;pointer-events:none}
 
@@ -708,13 +710,21 @@
       lv.setAttribute('playsinline', '');
       lv.setAttribute('webkit-playsinline', '');
       lv.load();
-      lv.play().catch(function(){ showSite(); });
+      var loaderOk = false;
+      var lp = lv.play();
+      if(lp && lp.then){
+        lp.then(function(){ loaderOk = true; }).catch(function(){ showSite(); });
+      }
       lv.addEventListener('ended', showSite);
+      // If autoplay works, allow up to 10s; if blocked, showSite() fires from catch above
       setTimeout(showSite, 10000);
     } else {
       lv.muted = true;
       lv.playsInline = true;
-      lv.play().catch(function(){ showSite(); });
+      var lp = lv.play();
+      if(lp && lp.then){
+        lp.then(function(){}).catch(function(){ showSite(); });
+      }
       lv.addEventListener('ended', showSite);
       setTimeout(showSite, 10000);
     }
@@ -1440,11 +1450,10 @@
 
       /* =========================================
          MOBILE VIDEO PLAY SYSTEM
-         Browsers block autoplay even for muted+playsinline.
-         Solution: play videos on user gesture (touch/click),
-         and re-try as lazy-loaded videos become ready.
+         On any user gesture, play ALL registered videos.
+         No readyState gate — call play() regardless so the
+         browser "unlocks" each video for when data arrives.
          ========================================= */
-      var userInteracted = false;
       var mobileVideoQueue = [];
 
       function attemptPlay(vid){
@@ -1453,42 +1462,32 @@
         try{ var p = vid.play(); if(p && p.catch) p.catch(function(){}); } catch(e){}
       }
 
-      function playAllReady(){
+      function playAll(){
         for(var i = 0; i < mobileVideoQueue.length; i++){
-          var v = mobileVideoQueue[i];
-          if(v && v.readyState >= 2 && v.paused) attemptPlay(v);
+          attemptPlay(mobileVideoQueue[i]);
         }
       }
 
-      function onUserGesture(){
-        if(!userInteracted){
-          userInteracted = true;
-          // First gesture: immediately try hero video
-          attemptPlay(heroVideo);
-        }
-        playAllReady();
-      }
-
-      // Listen on multiple events with capture for maximum reliability
+      // Every touch, click, or scroll: try to play everything
       ['touchstart','touchend','click'].forEach(function(evt){
-        document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
+        document.addEventListener(evt, playAll, {passive:true, capture:true});
       });
-
-      // Throttled scroll: retry paused videos after user has interacted
-      var scrollPlayTimer;
       window.addEventListener('scroll', function(){
-        if(!userInteracted) return;
-        clearTimeout(scrollPlayTimer);
-        scrollPlayTimer = setTimeout(playAllReady, 200);
+        playAll();
       }, {passive:true});
 
-      // Register hero video
-      mobileVideoQueue.push(heroVideo);
-      heroVideo.addEventListener('canplay', function(){
-        if(userInteracted) attemptPlay(heroVideo);
+      // Also retry when tab becomes visible
+      document.addEventListener('visibilitychange', function(){
+        if(!document.hidden) playAll();
       });
-      // Attempt immediate play (works on some devices)
-      attemptPlay(heroVideo);
+
+      function registerVid(v){
+        mobileVideoQueue.push(v);
+        v.addEventListener('canplay', function(){ attemptPlay(v); });
+        attemptPlay(v);
+      }
+
+      registerVid(heroVideo);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1672,11 +1671,7 @@
       arcVid.src = 'videos/arc.mp4';
       arcVid.preload = 'auto';
       arc.appendChild(arcVid);
-      mobileVideoQueue.push(arcVid);
-      arcVid.addEventListener('canplay', function(){
-        if(userInteracted) attemptPlay(arcVid);
-      });
-      attemptPlay(arcVid);
+      registerVid(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
@@ -1767,15 +1762,11 @@
             el.src = lazySrc;
             el.removeAttribute('data-lazy-src');
             el.load();
-            // Register in mobile play queue
-            mobileVideoQueue.push(el);
-            el.addEventListener('canplay', function(){
-              if(userInteracted) attemptPlay(el);
-            });
+            registerVid(el);
             videoObserver.unobserve(el);
           }
         });
-      }, { rootMargin: '200px' });
+      }, { rootMargin: '300px' });
 
       document.querySelectorAll('[data-lazy-src]').forEach(function(el){
         videoObserver.observe(el);
