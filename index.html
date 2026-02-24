@@ -1439,56 +1439,55 @@
       hero.style.minHeight = window.innerHeight + 'px';
 
       /* =========================================
-         MOBILE VIDEO PLAY SYSTEM
-         Browsers block autoplay even for muted+playsinline.
-         Solution: play videos on user gesture (touch/click),
-         and re-try as lazy-loaded videos become ready.
+         MOBILE VIDEO PLAY SYSTEM (bulletproof)
+         Modern mobile browsers allow muted+playsinline autoplay.
+         This system ensures all videos play reliably via:
+         1. Immediate play() attempts (no user-gate)
+         2. canplay/loadeddata listeners for retry
+         3. Periodic polling every 1s to catch stragglers
+         4. User gesture handlers as fallback
+         5. Visibility change handler to resume after backgrounding
          ========================================= */
-      var userInteracted = false;
       var mobileVideoQueue = [];
 
       function attemptPlay(vid){
         if(!vid || !vid.paused) return;
         vid.muted = true;
-        try{ var p = vid.play(); if(p && p.catch) p.catch(function(){}); } catch(e){}
+        try{
+          var p = vid.play();
+          if(p && p.catch) p.catch(function(){});
+        } catch(e){}
       }
 
       function playAllReady(){
         for(var i = 0; i < mobileVideoQueue.length; i++){
           var v = mobileVideoQueue[i];
-          if(v && v.readyState >= 2 && v.paused) attemptPlay(v);
+          if(v && v.paused) attemptPlay(v);
         }
       }
 
-      function onUserGesture(){
-        if(!userInteracted){
-          userInteracted = true;
-          // First gesture: immediately try hero video
-          attemptPlay(heroVideo);
-        }
-        playAllReady();
+      function registerVideo(vid){
+        mobileVideoQueue.push(vid);
+        vid.addEventListener('canplay', function(){ attemptPlay(vid); });
+        vid.addEventListener('loadeddata', function(){ attemptPlay(vid); });
+        attemptPlay(vid);
       }
 
-      // Listen on multiple events with capture for maximum reliability
-      ['touchstart','touchend','click'].forEach(function(evt){
-        document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
+      // User gesture: fallback for strict browsers
+      ['touchstart','touchend','click','scroll'].forEach(function(evt){
+        document.addEventListener(evt, playAllReady, {passive:true, capture:true});
       });
 
-      // Throttled scroll: retry paused videos after user has interacted
-      var scrollPlayTimer;
-      window.addEventListener('scroll', function(){
-        if(!userInteracted) return;
-        clearTimeout(scrollPlayTimer);
-        scrollPlayTimer = setTimeout(playAllReady, 200);
-      }, {passive:true});
+      // Periodic polling: catch any video that slipped through
+      setInterval(playAllReady, 1000);
+
+      // Resume videos when returning to tab
+      document.addEventListener('visibilitychange', function(){
+        if(!document.hidden) playAllReady();
+      });
 
       // Register hero video
-      mobileVideoQueue.push(heroVideo);
-      heroVideo.addEventListener('canplay', function(){
-        if(userInteracted) attemptPlay(heroVideo);
-      });
-      // Attempt immediate play (works on some devices)
-      attemptPlay(heroVideo);
+      registerVideo(heroVideo);
 
       // === INCUBAT3 / SUPERAPP ===
       var superapp = document.createElement('div');
@@ -1579,11 +1578,13 @@
           var bg = document.createElement('div');
           bg.className = 'section-bg';
           var bgVid = document.createElement('video');
+          bgVid.autoplay = true;
           bgVid.muted = true;
           bgVid.loop = true;
           bgVid.playsInline = true;
           bgVid.setAttribute('playsinline', '');
           bgVid.setAttribute('webkit-playsinline', '');
+          bgVid.setAttribute('autoplay', '');
           bgVid.preload = 'none';
           bgVid.setAttribute('data-lazy-src', f.bgSrc);
           bg.appendChild(bgVid);
@@ -1672,11 +1673,7 @@
       arcVid.src = 'videos/arc.mp4';
       arcVid.preload = 'auto';
       arc.appendChild(arcVid);
-      mobileVideoQueue.push(arcVid);
-      arcVid.addEventListener('canplay', function(){
-        if(userInteracted) attemptPlay(arcVid);
-      });
-      attemptPlay(arcVid);
+      registerVideo(arcVid);
 
       var arcHeading = document.createElement('div');
       arcHeading.className = 'm-heading';
@@ -1743,39 +1740,34 @@
       var footerBg = document.createElement('div');
       footerBg.className = 'footer-bg';
       var footerVid = document.createElement('video');
+      footerVid.autoplay = true;
       footerVid.muted = true;
       footerVid.loop = true;
       footerVid.playsInline = true;
       footerVid.setAttribute('playsinline', '');
+      footerVid.setAttribute('webkit-playsinline', '');
+      footerVid.setAttribute('autoplay', '');
       footerVid.setAttribute('data-lazy-src', 'videos/footer.mp4');
       footerBg.appendChild(footerVid);
       footer.insertBefore(footerBg, footer.firstChild);
 
       page.appendChild(footer);
 
-      // === LAZY-LOAD VIDEOS (integrated with mobile play system) ===
+      // === LAZY-LOAD VIDEOS (load ahead of scroll, auto-play) ===
       var videoObserver = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
           if(!entry.isIntersecting) return;
           var el = entry.target;
           var lazySrc = el.getAttribute('data-lazy-src');
           if(lazySrc){
-            el.muted = true;
-            el.playsInline = true;
-            el.setAttribute('playsinline', '');
-            el.setAttribute('webkit-playsinline', '');
             el.src = lazySrc;
             el.removeAttribute('data-lazy-src');
             el.load();
-            // Register in mobile play queue
-            mobileVideoQueue.push(el);
-            el.addEventListener('canplay', function(){
-              if(userInteracted) attemptPlay(el);
-            });
+            registerVideo(el);
             videoObserver.unobserve(el);
           }
         });
-      }, { rootMargin: '200px' });
+      }, { rootMargin: '600px' });
 
       document.querySelectorAll('[data-lazy-src]').forEach(function(el){
         videoObserver.observe(el);
