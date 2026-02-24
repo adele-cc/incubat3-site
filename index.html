@@ -122,7 +122,7 @@
       /* Mobile sections */
       .mobile-section{position:relative;width:100%;padding:60px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box}
       .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-start;padding-top:16px;padding-bottom:40px;overflow:hidden}
-      .mobile-section--hero .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
+      .mobile-section--hero .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden;background:url(images/hero_18.png) center/cover no-repeat}
       .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:cover;filter:blur(8px)}
       .mobile-section--hero .hero-bg::after{content:'';position:absolute;inset:0;background:
         linear-gradient(180deg,rgba(0,0,0,0.6) 0%,transparent 30%,transparent 60%,rgba(0,0,0,0.8) 100%),
@@ -156,7 +156,7 @@
 
       .mobile-section--arc{text-align:center;align-items:center;gap:40px;position:relative}
       .mobile-section--arc .arc-fade-top{position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(180deg,#000,transparent);z-index:2;pointer-events:none}
-      .mobile-section--arc .arc-video{width:calc(100% + 40px);margin:-60px -20px 0;max-height:360px;object-fit:cover}
+      .mobile-section--arc .arc-video{width:calc(100% + 40px);margin:-60px -20px 0;max-height:360px;object-fit:cover;background:url(images/arc-poster.jpg) center/cover no-repeat}
       .mobile-section--arc .arc-card{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
       .mobile-section--arc .arc-card img{width:200px;height:200px;object-fit:contain}
 
@@ -1668,6 +1668,7 @@
       arcVid.setAttribute('playsinline', '');
       arcVid.setAttribute('webkit-playsinline', '');
       arcVid.setAttribute('autoplay', '');
+      arcVid.poster = 'images/arc-poster.jpg';
       arcVid.src = 'videos/arc.mp4';
       arcVid.preload = 'auto';
       arc.appendChild(arcVid);
