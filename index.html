@@ -122,7 +122,7 @@
       /* Mobile sections */
       .mobile-section{position:relative;width:100%;padding:60px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box}
       .mobile-section--hero{min-height:100vh;min-height:100dvh;justify-content:flex-start;padding-top:16px;padding-bottom:40px;overflow:hidden}
-      .mobile-section--hero .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden;background:url(images/hero_18.png) center/cover no-repeat}
+      .mobile-section--hero .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden;background:url(images/hero.jpg) center/cover no-repeat}
       .mobile-section--hero .hero-bg video{width:100%;height:100%;object-fit:cover;filter:blur(8px);opacity:0;transition:opacity .3s}
       .mobile-section--hero .hero-bg video.playing{opacity:1}
       .mobile-section--hero .hero-bg::after{content:'';position:absolute;inset:0;background:
@@ -706,20 +706,24 @@
     }
 
     if(window.innerWidth <= 768){
-      // Mobile: use portrait loader video
+      // Mobile: try loader video, skip instantly if autoplay blocked
       lv.src = 'I3_Loader_Mobile.mp4';
       lv.muted = true;
       lv.playsInline = true;
       lv.setAttribute('playsinline', '');
       lv.setAttribute('webkit-playsinline', '');
       lv.load();
-      var loaderOk = false;
+      var loaderPlaying = false;
       var lp = lv.play();
       if(lp && lp.then){
-        lp.then(function(){ loaderOk = true; }).catch(function(){ showSite(); });
+        lp.then(function(){ loaderPlaying = true; }).catch(function(){ showSite(); });
+      } else {
+        // Old browser, no promise — skip after 1s if not playing
+        setTimeout(function(){ if(lv.paused) showSite(); }, 1000);
       }
       lv.addEventListener('ended', showSite);
-      // If autoplay works, allow up to 10s; if blocked, showSite() fires from catch above
+      // Safety: if loader plays, allow up to 10s; extra safety skip at 2s if stuck
+      setTimeout(function(){ if(!loaderPlaying) showSite(); }, 2000);
       setTimeout(showSite, 10000);
     } else {
       lv.muted = true;
