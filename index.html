@@ -698,8 +698,7 @@
       shown = true;
       loader.classList.add('loader--done');
       site.classList.add('site-wrap--visible');
-      // Pause loader video to free up resources/autoplay budget
-      if(lv){ try{ lv.pause(); lv.src=''; lv.load(); }catch(e){} }
+      if(lv){ try{ lv.pause(); }catch(e){} }
     }
 
     if(window.innerWidth <= 768){
@@ -710,9 +709,19 @@
       lv.playsInline = true;
       lv.setAttribute('muted', '');
       lv.setAttribute('playsinline', '');
-      lv.setAttribute('webkit-playsinline', '');
       lv.load();
-      lv.play().catch(function(){ showSite(); });
+      // Try autoplay; if blocked, wait for tap on loader screen
+      lv.addEventListener('canplay', function(){
+        var p = lv.play();
+        if(p && p.catch) p.catch(function(){});
+      });
+      lv.play().catch(function(){
+        // Autoplay blocked — tap loader to play, or skip after 3s
+        loader.addEventListener('touchstart', function(){
+          lv.play().then(function(){}).catch(function(){ showSite(); });
+        }, {once:true});
+        setTimeout(showSite, 3000);
+      });
       lv.addEventListener('ended', showSite);
       setTimeout(showSite, 10000);
     } else {
