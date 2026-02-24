@@ -698,6 +698,8 @@
       shown = true;
       loader.classList.add('loader--done');
       site.classList.add('site-wrap--visible');
+      // Pause loader video to free up resources/autoplay budget
+      if(lv){ try{ lv.pause(); lv.src=''; lv.load(); }catch(e){} }
     }
 
     if(window.innerWidth <= 768){
@@ -1440,58 +1442,77 @@
 
       /* =========================================
          MOBILE VIDEO PLAY SYSTEM
-         Key rules for reliable mobile autoplay:
-         1. NEVER call play() unless readyState >= 2 (has data)
-            Calling play() on empty videos causes rejected promises
-            which can make Safari permanently block autoplay.
-         2. Rely on the autoplay HTML attribute for initial playback.
-         3. Use canplay/loadedmetadata events to retry — not polling.
-         4. On user gesture, force-load and play any stuck videos.
-         5. Resume on visibility change (tab switch).
+         Why videos fail intermittently on iOS:
+         - play() on a video with no data rejects and counts against
+           Safari's autoplay budget
+         - The loader video can consume the autoplay slot
+         - Videos hidden behind the loader miss their autoplay window
+         - Once play() rejects ~3 times, Safari blocks further autoplay
+
+         Solution:
+         1. Track pending play() promises — never stack calls
+         2. Max 3 auto-retries per video, then wait for user gesture
+         3. canplay/loadeddata events trigger play (not polling)
+         4. User gesture resets retry count and force-plays everything
+         5. After loader finishes, trigger playback of all ready videos
+         6. Visibility change resumes paused videos
          ========================================= */
       var mobileVideoQueue = [];
 
       function attemptPlay(vid){
-        if(!vid || !vid.paused) return;
-        if(vid.readyState < 2) return; // no data yet — wait for event
+        if(!vid || !vid.paused || vid._playPending) return;
         vid.muted = true;
+        vid._playRetries = vid._playRetries || 0;
+        if(vid._playRetries > 3 && !vid._gestureRetry) return;
+        vid._gestureRetry = false;
+        vid._playPending = true;
         try{
           var p = vid.play();
-          if(p && p.catch) p.catch(function(){});
-        } catch(e){}
+          if(p && p.then){
+            p.then(function(){
+              vid._playPending = false;
+              vid._playRetries = 0;
+            }).catch(function(){
+              vid._playPending = false;
+              vid._playRetries++;
+            });
+          } else {
+            vid._playPending = false;
+          }
+        } catch(e){
+          vid._playPending = false;
+        }
       }
 
       function registerVideo(vid){
         mobileVideoQueue.push(vid);
         vid.addEventListener('canplay', function(){ attemptPlay(vid); });
-        vid.addEventListener('loadedmetadata', function(){
-          // loadedmetadata fires before canplay; start loading rest of data
-          if(vid.readyState < 2) vid.load();
-        });
-        vid.addEventListener('playing', function(){
-          // Once confirmed playing, mark so we don't re-trigger
-          vid._isPlaying = true;
-        });
-        vid.addEventListener('pause', function(){
-          vid._isPlaying = false;
-        });
-        // Only attempt if already has data (e.g. from cache)
-        if(vid.readyState >= 2) attemptPlay(vid);
+        vid.addEventListener('loadeddata', function(){ attemptPlay(vid); });
+        vid.addEventListener('loadedmetadata', function(){ attemptPlay(vid); });
+        // If already has data (cached), try immediately
+        if(vid.readyState >= 1) attemptPlay(vid);
+      }
+
+      function playAllReady(){
+        for(var i = 0; i < mobileVideoQueue.length; i++){
+          var v = mobileVideoQueue[i];
+          if(v && v.paused) attemptPlay(v);
+        }
       }
 
       // User gesture: most reliable way to start videos on iOS.
-      // On first touch, force-load any video that hasn't loaded,
-      // and play any that are ready.
+      // Reset retry counts so all videos get another chance.
       function onUserGesture(){
         for(var i = 0; i < mobileVideoQueue.length; i++){
           var v = mobileVideoQueue[i];
           if(!v) continue;
+          v._playRetries = 0;
+          v._playPending = false;
+          v._gestureRetry = true;
           if(v.paused){
             v.muted = true;
-            if(v.readyState < 2 && v.src){
-              // Video has a src but no data — kick-start loading
-              v.load();
-            }
+            // Kick-start loading if no data yet
+            if(v.readyState === 0 && v.src) v.load();
             attemptPlay(v);
           }
         }
@@ -1500,15 +1521,28 @@
         document.addEventListener(evt, onUserGesture, {passive:true, capture:true});
       });
 
+      // After loader finishes (site becomes visible), trigger playback.
+      // The loader may have consumed the autoplay slot, so this retry
+      // catches videos that missed their window.
+      var siteEl = document.getElementById('site');
+      if(siteEl){
+        new MutationObserver(function(mutations, obs){
+          if(siteEl.classList.contains('site-wrap--visible')){
+            setTimeout(playAllReady, 300);
+            setTimeout(playAllReady, 1000);
+            setTimeout(playAllReady, 3000);
+            obs.disconnect();
+          }
+        }).observe(siteEl, {attributes:true, attributeFilter:['class']});
+        // In case loader already finished
+        if(siteEl.classList.contains('site-wrap--visible')){
+          setTimeout(playAllReady, 300);
+        }
+      }
+
       // Resume videos when returning to tab
       document.addEventListener('visibilitychange', function(){
-        if(!document.hidden){
-          setTimeout(function(){
-            for(var i = 0; i < mobileVideoQueue.length; i++){
-              attemptPlay(mobileVideoQueue[i]);
-            }
-          }, 300);
-        }
+        if(!document.hidden) setTimeout(playAllReady, 300);
       });
 
       // Register hero video
