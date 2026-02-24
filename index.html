@@ -706,7 +706,9 @@
       // Mobile: use portrait loader video
       lv.src = 'I3_Loader_Mobile.mp4';
       lv.muted = true;
+      lv.defaultMuted = true;
       lv.playsInline = true;
+      lv.setAttribute('muted', '');
       lv.setAttribute('playsinline', '');
       lv.setAttribute('webkit-playsinline', '');
       lv.load();
@@ -715,7 +717,10 @@
       setTimeout(showSite, 10000);
     } else {
       lv.muted = true;
+      lv.defaultMuted = true;
       lv.playsInline = true;
+      lv.setAttribute('muted', '');
+      lv.setAttribute('playsinline', '');
       lv.play().catch(function(){ showSite(); });
       lv.addEventListener('ended', showSite);
       setTimeout(showSite, 10000);
@@ -728,8 +733,12 @@
       var vid = document.createElement('video');
       vid.autoplay = true;
       vid.muted = true;
+      vid.defaultMuted = true;
       vid.loop = true;
       vid.playsInline = true;
+      vid.setAttribute('autoplay', '');
+      vid.setAttribute('muted', '');
+      vid.setAttribute('playsinline', '');
       vid.style.cssText = img.style.cssText;
       vid.className = img.className;
       vid.setAttribute('data-layer', img.getAttribute('data-layer') || '');
@@ -1400,8 +1409,11 @@
       var heroVideo = document.createElement('video');
       heroVideo.autoplay = true;
       heroVideo.muted = true;
+      heroVideo.defaultMuted = true;
       heroVideo.loop = true;
       heroVideo.playsInline = true;
+      heroVideo.setAttribute('autoplay', '');
+      heroVideo.setAttribute('muted', '');
       heroVideo.setAttribute('playsinline', '');
       heroVideo.setAttribute('webkit-playsinline', '');
       heroVideo.poster = 'images/hero_18.png';
@@ -1462,6 +1474,8 @@
       function attemptPlay(vid){
         if(!vid || !vid.paused || vid._playPending) return;
         vid.muted = true;
+        vid.defaultMuted = true;
+        if(!vid.hasAttribute('muted')) vid.setAttribute('muted', '');
         vid._playRetries = vid._playRetries || 0;
         if(vid._playRetries > 3 && !vid._gestureRetry) return;
         vid._gestureRetry = false;
@@ -1639,11 +1653,13 @@
           var bgVid = document.createElement('video');
           bgVid.autoplay = true;
           bgVid.muted = true;
+          bgVid.defaultMuted = true;
           bgVid.loop = true;
           bgVid.playsInline = true;
+          bgVid.setAttribute('autoplay', '');
+          bgVid.setAttribute('muted', '');
           bgVid.setAttribute('playsinline', '');
           bgVid.setAttribute('webkit-playsinline', '');
-          bgVid.setAttribute('autoplay', '');
           bgVid.preload = 'none';
           bgVid.setAttribute('data-lazy-src', f.bgSrc);
           bg.appendChild(bgVid);
@@ -1724,11 +1740,13 @@
       arcVid.className = 'arc-video';
       arcVid.autoplay = true;
       arcVid.muted = true;
+      arcVid.defaultMuted = true;
       arcVid.loop = true;
       arcVid.playsInline = true;
+      arcVid.setAttribute('autoplay', '');
+      arcVid.setAttribute('muted', '');
       arcVid.setAttribute('playsinline', '');
       arcVid.setAttribute('webkit-playsinline', '');
-      arcVid.setAttribute('autoplay', '');
       arcVid.src = 'videos/arc.mp4';
       arcVid.preload = 'auto';
       arc.appendChild(arcVid);
@@ -1801,11 +1819,13 @@
       var footerVid = document.createElement('video');
       footerVid.autoplay = true;
       footerVid.muted = true;
+      footerVid.defaultMuted = true;
       footerVid.loop = true;
       footerVid.playsInline = true;
+      footerVid.setAttribute('autoplay', '');
+      footerVid.setAttribute('muted', '');
       footerVid.setAttribute('playsinline', '');
       footerVid.setAttribute('webkit-playsinline', '');
-      footerVid.setAttribute('autoplay', '');
       footerVid.setAttribute('data-lazy-src', 'videos/footer.mp4');
       footerBg.appendChild(footerVid);
       footer.insertBefore(footerBg, footer.firstChild);
